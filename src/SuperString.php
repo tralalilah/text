@@ -11,13 +11,17 @@ use Throwable;
  * Class SuperString
  * @package Midwinter\SuperString
  **/
-class SuperString implements JsonSerializable
+final class SuperString implements JsonSerializable
 {
     /**
      * @var string
      */
     private $value;
 
+    /**
+     * @param mixed $value
+     * @return static
+     */
     public static function create($value): self
     {
         if(is_object($value)){
@@ -32,11 +36,18 @@ class SuperString implements JsonSerializable
         if($value === null || $value === true || $value === false){
             throw new InvalidArgumentException('null, true, and false are not acceptable input', 400);
         }
-        return new self((string)$value);
+        return new static((string)$value);
     }
 
-    private function __construct(string $value)
+    /**
+     * SuperString constructor.
+     * @param string|null $value
+     */
+    private function __construct(?string $value)
     {
+        if($value === null){
+            throw new InvalidArgumentException('Null is not acceptable input', 400);
+        }
         $this->value = $value;
     }
 
@@ -63,7 +74,7 @@ class SuperString implements JsonSerializable
         return strpos($this->value, $string) !== FALSE;
     }
 
-    public function containsRegex($pattern): bool
+    public function containsRegex(string $pattern): bool
     {
         try {
             $result = preg_match($pattern, $this->value);
@@ -80,7 +91,7 @@ class SuperString implements JsonSerializable
     public function positionOf(string $string): int
     {
         Assertion::contains($this->value, $string, 'Given string does not appear');
-        return strpos($this->value, $string);
+        return (int)strpos($this->value, $string);
     }
 
     public function characterAt(int $position): string
@@ -90,7 +101,7 @@ class SuperString implements JsonSerializable
     }
 
 
-    public function first(int $chars): self
+    public function first(int $chars): SuperString
     {
         Assertion::greaterOrEqualThan($chars, 0, 'Chars cannot be negative');
         if ($chars > $this->length()){
@@ -99,7 +110,7 @@ class SuperString implements JsonSerializable
         return new self(substr($this->value, 0, $chars));
     }
 
-    public function last(int $chars): self
+    public function last(int $chars): SuperString
     {
         Assertion::greaterOrEqualThan($chars, 0, 'Chars cannot be negative');
         if ($chars > $this->length()){
@@ -108,95 +119,91 @@ class SuperString implements JsonSerializable
         return new self(substr($this->value, -$chars));
     }
 
-    public function before(string $string): self
+    public function before(string $string): SuperString
     {
        Assertion::contains($this->value, $string, 'Must contain the string argument');
        return new self(substr($this->value, 0, $this->positionOf($string)));
     }
 
-    public function after(string $string): self
+    public function after(string $string): SuperString
     {
        Assertion::contains($this->value, $string, 'Must contain the string argument');
        return new self(substr($this->value, $this->positionOf($string) - $this->length() + strlen($string)));
     }
 
-    public function allButTheFirst(int $chars)
+    public function allButTheFirst(int $chars): SuperString
     {
         Assertion::lessOrEqualThan($chars, $this->length(), '$chars must be not be longer than string length');
         return new self(substr($this->value, $chars));
     }
 
-    public function allButTheLast(int $chars)
+    public function allButTheLast(int $chars): SuperString
     {
         Assertion::lessOrEqualThan($chars, $this->length(), '$chars must be not be longer than string length');
         return new self(substr($this->value, 0, -$chars));
     }
 
-    /**
-     * Converts the string to uppercase
-     * @return $this
-     */
-    public function uppercase(): self
+    public function uppercase(): SuperString
     {
         return new self(strtoupper($this->value));
     }
 
-    public function lowercase(): self
+    public function lowercase(): SuperString
     {
         return new self(strtolower($this->value));
     }
 
-    public function camelCase(): self
+    public function camelCase(): SuperString
     {
-        $ucwords = self::create(ucwords($this->value))
+        $uppercaseWords = self::create(ucwords($this->value))
             ->replaceAll(' ', '')
             ->replaceSpecialCharacters('_');
-        return new self(strtolower(($this->first(1))->toString()) . $ucwords->allButTheFirst(1)->toString());
+        return new self(strtolower(($this->first(1))->toString()) . $uppercaseWords->allButTheFirst(1)->toString());
     }
 
-    public function snakeCase(): self
+    public function snakeCase(): SuperString
     {
         return new self(strtolower($this->replaceAll(' ', '_')->replaceSpecialCharacters('')->toString()));
     }
 
-    public function titleCase(): self
+    public function titleCase(): SuperString
     {
         return new self(ucwords($this->toString()));
     }
 
-    public function trim(): self
+    public function trim(): SuperString
     {
         return new self(trim($this->value));
     }
 
-    public function replaceOne(string $textToReplace, string $replacement): self
+    public function replaceOne(string $textToReplace, string $replacement): SuperString
     {
         $offset = $this->positionOf($textToReplace);
         $length = strlen($textToReplace);
         return new self(substr_replace($this->value, $replacement, $offset, $length));
     }
 
-    public function replaceAll(string $textToReplace, string $replacement): self
+    public function replaceAll(string $textToReplace, string $replacement): SuperString
     {
         return new self(str_replace($textToReplace, $replacement, $this->value));
     }
 
-    public function replaceSpecialCharacters(string $replacement, string $optionalPattern = '/[^ A-Za-z0-9\-_]/'): self
+    public function replaceSpecialCharacters(string $replacement, string $optionalPattern = '/[^ A-Za-z0-9\-_]/'): SuperString
     {
         return new self (preg_replace($optionalPattern, $replacement, $this->value));
     }
 
-    public function regexReplaceOne(string $replacement, string $pattern): self
+    public function regexReplaceOne(string $replacement, string $pattern): SuperString
     {
         return new self (preg_replace($pattern, $replacement, $this->value, 1));
     }
 
-    public function regexReplaceAll(string $replacement, string $pattern): self
+    public function regexReplaceAll(string $replacement, string $pattern): SuperString
     {
         return new self (preg_replace($pattern, $replacement, $this->value));
     }
 
-    public function swapText(string $toBeSwapped, $swapWith): self
+    public function swapText(string $toBeSwapped, string $swapWith): SuperString
     {
         $toBeSwappedPos = strpos($this->value, $toBeSwapped);
         $swapPos = strpos($this->value, $swapWith);

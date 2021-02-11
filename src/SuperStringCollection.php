@@ -38,13 +38,13 @@ class SuperStringCollection implements Countable, JsonSerializable
     ];
 
     /**
-     * @var Collection
+     * @var Collection|SuperString[]
      */
     private $collection;
 
     /**
      * Returns a new instance of SuperStringCollection.
-     * @param array $array Contents can be of mixed types. Associative arrays will lose string keys.
+     * @param mixed $array Contents can be of mixed types. Associative arrays will lose string keys.
      * @return SuperStringCollection
      * @throws \Assert\AssertionFailedException
      */
@@ -54,6 +54,10 @@ class SuperStringCollection implements Countable, JsonSerializable
         return new self($array);
     }
 
+    /**
+     * SuperStringCollection constructor.
+     * @param mixed[] $inputs
+     */
     private function __construct(array $inputs)
     {
         $objects = [];
@@ -74,7 +78,7 @@ class SuperStringCollection implements Countable, JsonSerializable
 
     /**
      * Implements JsonSerialize interface
-     * @return array
+     * @return array[]
      */
     public function jsonSerialize()
     {
@@ -83,7 +87,7 @@ class SuperStringCollection implements Countable, JsonSerializable
 
     /**
      * Outputs the content of the collection as an array of strings
-     * @return array
+     * @return array[]
      */
     public function toArray(): array
     {
@@ -166,12 +170,22 @@ class SuperStringCollection implements Countable, JsonSerializable
         return SuperStringCollection::wrap(array_unique($this->toArray()));
     }
 
-    public function __call($method, $args)
+    /**
+     * @param string $method
+     * @param string[] $args
+     * @return SuperStringCollection
+     */
+    public function __call(string $method, array $args): SuperStringCollection
     {
         $result = null;
         if (in_array($method, self::AVAILABLE_METHODS)) {
             $result = $this->collection->map(function($item) use ($method, $args) {
-                return call_user_func( array($item,$method), $args );
+                /** @var callable $callback */
+                $callback = [$item, $method];
+                if (is_callable($item)){
+                    return call_user_func($callback, $args );
+                }
+                throw new MethodNotFoundException('An error occurred', SuperStringCollection::class, $method);
             });
         } else {
             throw new MethodNotFoundException('No such method', SuperStringCollection::class, $method);
