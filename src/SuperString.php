@@ -33,8 +33,8 @@ final class SuperString implements JsonSerializable
                 throw new InvalidArgumentException('Input objects must hav a "toString()"  or "__toString()" method', 400);
             }
         }
-        if($value === null || $value === true || $value === false){
-            throw new InvalidArgumentException('null, true, and false are not acceptable input', 400);
+        if($value === true || $value === false){
+            throw new InvalidArgumentException('true and false are not acceptable input', 400);
         }
         return new static((string)$value);
     }
@@ -45,9 +45,7 @@ final class SuperString implements JsonSerializable
      */
     private function __construct(?string $value)
     {
-        if($value === null){
-            throw new InvalidArgumentException('Null is not acceptable input', 400);
-        }
+        Assert($value !== null, 'Value should not be null');
         $this->value = $value;
     }
 

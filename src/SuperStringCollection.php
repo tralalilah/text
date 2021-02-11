@@ -182,10 +182,7 @@ class SuperStringCollection implements Countable, JsonSerializable
             $result = $this->collection->map(function($item) use ($method, $args) {
                 /** @var callable $callback */
                 $callback = [$item, $method];
-                if (is_callable($item)){
-                    return call_user_func($callback, $args );
-                }
-                throw new MethodNotFoundException('An error occurred', SuperStringCollection::class, $method);
+                return call_user_func($callback, $args );
             });
         } else {
             throw new MethodNotFoundException('No such method', SuperStringCollection::class, $method);
