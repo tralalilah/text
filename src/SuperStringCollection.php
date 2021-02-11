@@ -21,7 +21,7 @@ use Tightenco\Collect\Support\Collection;
  * @method SuperStringCollection trim() Trims all strings
  * @method SuperStringCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each string
  * @method SuperStringCollection regexReplaceAll(string $replacement, string $pattern) Replaces all pattern matches in each string
- * @method missingMethod() Does not exist.
+ * @method missingMethod() Does not exist. For testing purposes only.
  */
 class SuperStringCollection implements Countable, JsonSerializable
 {
