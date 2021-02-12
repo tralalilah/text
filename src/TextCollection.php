@@ -48,10 +48,18 @@ class TextCollection implements Countable, JsonSerializable
      * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
-    public static function wrap($array)
+    public static function wrap($array): TextCollection
     {
         Assertion::isArray($array, 'Input must be an array');
         return new self($array);
+    }
+
+    /**
+     * @return TextCollection
+     */
+    public static function empty(): TextCollection
+    {
+        return new self([]);
     }
 
     /**
@@ -65,6 +73,11 @@ class TextCollection implements Countable, JsonSerializable
             $objects[] = Text::create($input);
         }
         $this->collection = Collection::wrap($objects);
+    }
+
+    public function add(Text $text): void
+    {
+        $this->collection->add($text);
     }
 
     /**

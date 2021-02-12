@@ -2,6 +2,7 @@
 
 namespace Midwinter\Text\tests;
 
+use Midwinter\Text\Text;
 use Midwinter\Text\TextCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Exception\Doubler\MethodNotFoundException;
@@ -44,6 +45,14 @@ class TextCollectionTest extends TestCase
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(self::BASIC_ARRAY, $collection->toArray());
+    }
+
+    public function testAdd(): void
+    {
+        $collection = TextCollection::wrap(self::BASIC_ARRAY);
+        $collection->add(Text::create('bash'));
+        self::assertCount(4, $collection);
+
     }
 
     public function testCount(): void

@@ -50,6 +50,15 @@ final class Text implements JsonSerializable
         $this->value = $value;
     }
 
+    /**
+     * Clones the object into a new one
+     * @return self
+     */
+    public function clone(): self
+    {
+        return new self($this->value);
+    }
+
     public function jsonSerialize()
     {
         return $this->value;
@@ -260,6 +269,30 @@ final class Text implements JsonSerializable
     public function regexReplaceAll(string $replacement, string $pattern): Text
     {
         return new self (preg_replace($pattern, $replacement, $this->value));
+    }
+
+    /**
+     * @param string[] $tokens
+     * @param array[] $replaceData
+     * @param string $leftDelimiter
+     * @param string $rightDelimiter
+     * @return TextCollection
+     * @throws \Assert\AssertionFailedException
+     */
+    public function mailMerge(array $tokens, array $replaceData, string $leftDelimiter, string $rightDelimiter): TextCollection
+    {
+        $collection = TextCollection::empty();
+        foreach ($replaceData as $replacementRow){
+            Assertion::eq(count($tokens), count($replacementRow), 'Replacement arrays must be same length as token array');
+            $count = count($tokens);
+            $text = $this->clone();
+            for($i = 0; $i < $count; $i ++){
+                $textToReplace = $leftDelimiter . $tokens[$i] . $rightDelimiter;
+                $text = $text->replaceAll($textToReplace, $replacementRow[$i]);
+            }
+            $collection->add($text);
+        }
+        return $collection;
     }
 
     public function swapText(string $toBeSwapped, string $swapWith): Text
