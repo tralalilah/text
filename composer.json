@@ -24,7 +24,8 @@
     "require": {
         "beberlei/assert": "^3.3",
         "tightenco/collect": "^8.19",
-        "ext-json": "*"
+        "ext-json": "*",
+        "php": "7.3"
     },
 
     "autoload": {
