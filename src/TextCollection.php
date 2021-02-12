@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\SuperString;
+namespace Midwinter\Text;
 
 use Assert\Assertion;
 use Countable;
@@ -9,21 +9,21 @@ use Prophecy\Exception\Doubler\MethodNotFoundException;
 use Tightenco\Collect\Support\Collection;
 
 /**
- * Class SuperStringCollection
- * @package Midwinter\SuperString
+ * Class TextCollection
+ * @package Midwinter\Text
  *
- * @method SuperStringCollection uppercase() Converts all strings to uppercase
- * @method SuperStringCollection lowercase() Converts all strings to lowercase
- * @method SuperStringCollection snakeCase() Converts all strings to snake_case
- * @method SuperStringCollection camelCase() Converts all strings to camelCase
- * @method SuperStringCollection titleCase() Converts all strings to Title Case
- * @method SuperStringCollection replaceSpecialCharacters(string $replacement) Replace special characters with provided replacement
- * @method SuperStringCollection trim() Trims all strings
- * @method SuperStringCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each string
- * @method SuperStringCollection regexReplaceAll(string $replacement, string $pattern) Replaces all pattern matches in each string
+ * @method TextCollection uppercase() Converts all strings to uppercase
+ * @method TextCollection lowercase() Converts all strings to lowercase
+ * @method TextCollection snakeCase() Converts all strings to snake_case
+ * @method TextCollection camelCase() Converts all strings to camelCase
+ * @method TextCollection titleCase() Converts all strings to Title Case
+ * @method TextCollection replaceSpecialCharacters(string $replacement) Replace special characters with provided replacement
+ * @method TextCollection trim() Trims all strings
+ * @method TextCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each string
+ * @method TextCollection regexReplaceAll(string $replacement, string $pattern) Replaces all pattern matches in each string
  * @method missingMethod() Does not exist. For testing purposes only.
  */
-class SuperStringCollection implements Countable, JsonSerializable
+class TextCollection implements Countable, JsonSerializable
 {
     private const AVAILABLE_METHODS = [
         'uppercase',
@@ -38,14 +38,14 @@ class SuperStringCollection implements Countable, JsonSerializable
     ];
 
     /**
-     * @var Collection|SuperString[]
+     * @var Collection|Text[]
      */
     private $collection;
 
     /**
-     * Returns a new instance of SuperStringCollection.
+     * Returns a new instance of TextCollection.
      * @param mixed $array Contents can be of mixed types. Associative arrays will lose string keys.
-     * @return SuperStringCollection
+     * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
     public static function wrap($array)
@@ -55,14 +55,14 @@ class SuperStringCollection implements Countable, JsonSerializable
     }
 
     /**
-     * SuperStringCollection constructor.
+     * TextCollection constructor.
      * @param mixed[] $inputs
      */
     private function __construct(array $inputs)
     {
         $objects = [];
         foreach ($inputs as $input){
-            $objects[] = SuperString::create($input);
+            $objects[] = Text::create($input);
         }
         $this->collection = Collection::wrap($objects);
     }
@@ -125,9 +125,9 @@ class SuperStringCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Exposes map() method of Collection. Returns a new SuperStringCollection with the results of the map operation.
+     * Exposes map() method of Collection. Returns a new TextCollection with the results of the map operation.
      * @param callable $function
-     * @return SuperStringCollection
+     * @return TextCollection
      */
     public function map(callable $function)
     {
@@ -135,9 +135,9 @@ class SuperStringCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Exposes filter() method of Collection. Returns a new SuperStringCollection with the filtered results.
+     * Exposes filter() method of Collection. Returns a new TextCollection with the filtered results.
      * @param callable $function
-     * @return SuperStringCollection
+     * @return TextCollection
      */
     public function filter(callable $function)
     {
@@ -146,7 +146,7 @@ class SuperStringCollection implements Countable, JsonSerializable
 
     /**
      * Sorts the collection alphabetically
-     * @return SuperStringCollection
+     * @return TextCollection
      */
     public function sort(): self
     {
@@ -155,27 +155,27 @@ class SuperStringCollection implements Countable, JsonSerializable
         return new self($arr);
     }
 
-    public function join(string $separator): SuperString
+    public function join(string $separator): Text
     {
-        return SuperString::create(implode($separator, $this->toArray()));
+        return Text::create(implode($separator, $this->toArray()));
     }
 
     /**
      * Removes duplicate elements of the collection
-     * @return SuperStringCollection
+     * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
-    public function unique(): SuperStringCollection
+    public function unique(): TextCollection
     {
-        return SuperStringCollection::wrap(array_unique($this->toArray()));
+        return TextCollection::wrap(array_unique($this->toArray()));
     }
 
     /**
      * @param string $method
      * @param string[] $args
-     * @return SuperStringCollection
+     * @return TextCollection
      */
-    public function __call(string $method, array $args): SuperStringCollection
+    public function __call(string $method, array $args): TextCollection
     {
         $result = null;
         if (in_array($method, self::AVAILABLE_METHODS)) {
@@ -185,7 +185,7 @@ class SuperStringCollection implements Countable, JsonSerializable
                 return call_user_func($callback, $args );
             });
         } else {
-            throw new MethodNotFoundException('No such method', SuperStringCollection::class, $method);
+            throw new MethodNotFoundException('No such method', TextCollection::class, $method);
         }
         return new self($result->toArray());
     }

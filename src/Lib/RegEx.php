@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\SuperString\Lib;
+namespace Midwinter\Text\Lib;
 
 class RegEx
 {

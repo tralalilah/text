@@ -1,5 +1,5 @@
 {
-    "name": "midwinter/super-string",
+    "name": "midwinter/text",
     "description": "String manipulation package for development",
     "version": "0.1.0",
     "type": "library",
@@ -29,12 +29,12 @@
 
     "autoload": {
         "psr-4": {
-            "Midwinter\\SuperString\\": "src"
+            "Midwinter\\Text\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Midwinter\\SuperString\\tests\\": "tests"
+            "Midwinter\\Text\\tests\\": "tests"
         }
     },
     "require-dev": {

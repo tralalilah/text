@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\SuperString\tests;
+namespace Midwinter\Text\tests;
 
 use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException;
-use Midwinter\SuperString\SuperString;
+use Midwinter\Text\Text;
 use PHPUnit\Framework\TestCase;
 
-class SuperStringTest extends TestCase
+class TextTest extends TestCase
 {
     private const STRING = 'Super string Is a Class';
     private const NUMBER = 1.23;
@@ -31,55 +31,55 @@ class SuperStringTest extends TestCase
 
     public function testFromScalarString(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::STRING, $str->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::STRING, $text->toString());
     }
 
     public function testFromScalarNumber(): void
     {
-        $str = SuperString::create(self::NUMBER);
-        self::assertEquals((string)self::NUMBER, $str->toString());
+        $text = Text::create(self::NUMBER);
+        self::assertEquals((string)self::NUMBER, $text->toString());
     }
 
     public function testFromBooleanOrNull(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        SuperString::create(TRUE);
+        Text::create(TRUE);
 
         $this->expectException(InvalidArgumentException::class);
-        SuperString::create(FALSE);
+        Text::create(FALSE);
 
         $this->expectException(InvalidArgumentException::class);
-        SuperString::create(null);
+        Text::create(null);
     }
 
     public function testFromObject(): void
     {
-        $str = SuperString::create(new TestObjectToString(self::STRING));
-        self::assertEquals(self::STRING, $str->toString());
+        $text = Text::create(new TestObjectToString(self::STRING));
+        self::assertEquals(self::STRING, $text->toString());
 
-        $str = SuperString::create(new TestObject__ToString(self::STRING));
-        self::assertEquals(self::STRING, $str->toString());
+        $text = Text::create(new TestObject__ToString(self::STRING));
+        self::assertEquals(self::STRING, $text->toString());
 
         $this->expectException(InvalidArgumentException::class);
-        SuperString::create(new TestObjectWithNoMethods());
+        Text::create(new TestObjectWithNoMethods());
     }
 
     public function testImmutable(): void
     {
-        $str = SuperString::create(self::STRING);
-        $str2 = $str->uppercase();
-        self::assertEquals(self::STRING, $str->toString());
+        $text = Text::create(self::STRING);
+        $str2 = $text->uppercase();
+        self::assertEquals(self::STRING, $text->toString());
         self::assertEquals(self::UPPER_CASE, $str2->toString());
     }
 
     public function testContains(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertTrue($str->contains(self::CONTAINS_CASE_SENSE));
-        self::assertFalse($str->contains(self::DOES_NOT_CONTAIN_CASE_SENSE));
-        self::assertTrue($str->contains(self::CONTAINS_CASE_INSENSITIVE, false));
-        self::assertFalse($str->contains(self::DOES_NOT_CONTAIN_CASE_INSENSITIVE, false));
+        $text = Text::create(self::STRING);
+        self::assertTrue($text->contains(self::CONTAINS_CASE_SENSE));
+        self::assertFalse($text->contains(self::DOES_NOT_CONTAIN_CASE_SENSE));
+        self::assertTrue($text->contains(self::CONTAINS_CASE_INSENSITIVE, false));
+        self::assertFalse($text->contains(self::DOES_NOT_CONTAIN_CASE_INSENSITIVE, false));
     }
 
     public function testContainsRegex(): void
@@ -87,26 +87,26 @@ class SuperStringTest extends TestCase
         $start = 'A bird is an animal.';
         $containsPattern = '/bird/';
         $doesNotContainPattern = '/tree/';
-        $str = SuperString::create($start);
-        self::assertTrue($str->containsRegex($containsPattern));
-        self::assertFalse($str->containsRegex($doesNotContainPattern));
+        $text = Text::create($start);
+        self::assertTrue($text->containsRegex($containsPattern));
+        self::assertFalse($text->containsRegex($doesNotContainPattern));
         $this->expectException(InvalidArgumentException::class);
-        $str->containsRegex('/broken');
+        $text->containsRegex('/broken');
     }
 
     public function testLength(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::LENGTH, $str->length());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::LENGTH, $text->length());
     }
 
     public function testPositionOf(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::SUBSTRING_POS, $str->positionOf(self::SUBSTRING));
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::SUBSTRING_POS, $text->positionOf(self::SUBSTRING));
 
         $this->expectException(AssertionFailedException::class);
-        $str->positionOf(self::DOES_NOT_CONTAIN_CASE_SENSE);
+        $text->positionOf(self::DOES_NOT_CONTAIN_CASE_SENSE);
     }
 
     public function testLastPositionOf(): void
@@ -119,55 +119,55 @@ class SuperStringTest extends TestCase
         $search2 = ']';
         $lastPos2 = 15;
 
-        $str = SuperString::create($input);
-        self::assertEquals($lastPos, $str->lastPositionOf($search));
+        $text = Text::create($input);
+        self::assertEquals($lastPos, $text->lastPositionOf($search));
 
-        $str2 = SuperString::create($input2);
-        self::assertEquals($lastPos2, $str2->lastPositionOf($search2));
+        $text2 = Text::create($input2);
+        self::assertEquals($lastPos2, $text2->lastPositionOf($search2));
     }
 
     public function testCharacterAt(): void
     {
         $string = 'ABCDE';
         $charAt4 = 'E';
-        $str = SuperString::create($string);
-        self::assertEquals($charAt4, $str->characterAt(4));
+        $text = Text::create($string);
+        self::assertEquals($charAt4, $text->characterAt(4));
     }
 
     public function testFirst(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::FIRST_FIVE, $str->first(5)->toString());
-        self::assertEquals(self::STRING, $str->first(1000)->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::FIRST_FIVE, $text->first(5)->toString());
+        self::assertEquals(self::STRING, $text->first(1000)->toString());
         $this->expectException(AssertionFailedException::class);
-        $str->first(-6);
+        $text->first(-6);
     }
 
     public function testLast(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::LAST_FIVE, $str->last(5)->toString());
-        self::assertEquals(self::STRING, $str->last(1000)->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::LAST_FIVE, $text->last(5)->toString());
+        self::assertEquals(self::STRING, $text->last(1000)->toString());
         $this->expectException(AssertionFailedException::class);
-        $str->last(-6);
+        $text->last(-6);
     }
 
     public function testBefore(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::ALL_BEFORE_THE_SUBSTRING, $str->before(self::SUBSTRING)->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::ALL_BEFORE_THE_SUBSTRING, $text->before(self::SUBSTRING)->toString());
     }
 
     public function testAfter(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::ALL_AFTER_THE_SUBSTRING, $str->after(self::SUBSTRING)->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::ALL_AFTER_THE_SUBSTRING, $text->after(self::SUBSTRING)->toString());
     }
 
     public function testAllButTheFirst(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::ALL_BUT_THE_FIRST_THREE, $str->allButTheFirst(3)->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::ALL_BUT_THE_FIRST_THREE, $text->allButTheFirst(3)->toString());
     }
 
     public function testCount(): void
@@ -176,9 +176,9 @@ class SuperStringTest extends TestCase
         $check = 'a';
         $checkNone = 'e';
 
-        $str = SuperString::create($input);
-        self::assertEquals(3, $str->count($check));
-        self::assertEquals(0, $str->count($checkNone));
+        $text = Text::create($input);
+        self::assertEquals(3, $text->count($check));
+        self::assertEquals(0, $text->count($checkNone));
     }
 
     public function testBetween(): void
@@ -190,46 +190,46 @@ class SuperStringTest extends TestCase
         $inputOneToken = 'missing %one token';
         $between = 'between';
 
-        $str = SuperString::create($inputDifferent);
-        self::assertEquals($between, $str->between('-', '?')->toString());
+        $text = Text::create($inputDifferent);
+        self::assertEquals($between, $text->between('-', '?')->toString());
 
-        $str = SuperString::create($inputSame);
-        self::assertEquals($between, $str->between('-', '-')->toString());
+        $text = Text::create($inputSame);
+        self::assertEquals($between, $text->between('-', '-')->toString());
 
-        $str = SuperString::create($inputNoBuffer);
-        self::assertEquals($between, $str->between('%', '%')->toString());
+        $text = Text::create($inputNoBuffer);
+        self::assertEquals($between, $text->between('%', '%')->toString());
 
-        $str = SuperString::create($inputNoMatch);
-        self::assertEquals('', $str->between('%', '%')->toString());
+        $text = Text::create($inputNoMatch);
+        self::assertEquals('', $text->between('%', '%')->toString());
 
-        $str = SuperString::create($inputOneToken);
+        $text = Text::create($inputOneToken);
         $this->expectException(InvalidArgumentException::class);
-        $str->between('%', '%');
+        $text->between('%', '%');
     }
 
     public function testBetweenMoreThanOneMatch(): void
     {
         $input = '[Here] is [more] than one.';
-        $str = SuperString::create($input);
-        $response = $str->between('[', ']')->toString();
+        $text = Text::create($input);
+        $response = $text->between('[', ']')->toString();
         self::assertEquals('Here', $response);
     }
 
     public function testBetweenNoTokensDifferent(): void
     {
         $inputNoTokens = 'missing tokens';
-        $str = SuperString::create($inputNoTokens);
+        $text = Text::create($inputNoTokens);
         $this->expectException(InvalidArgumentException::class);
-        $str->between('%', '?');
+        $text->between('%', '?');
     }
 
     public function testBetweenNoTokensSame(): void
     {
         $inputNoTokens = 'missing tokens';
-        $str = SuperString::create($inputNoTokens);
+        $text = Text::create($inputNoTokens);
 
         $this->expectException(InvalidArgumentException::class);
-        $str->between('%', '%');
+        $text->between('%', '%');
     }
 
     public function testBetweenMany(): void
@@ -239,41 +239,41 @@ class SuperStringTest extends TestCase
             'Here',
             'more'
         ];
-        $str = SuperString::create($input);
-        $response = $str->betweenMany('[', ']')->toArray();
+        $text = Text::create($input);
+        $response = $text->betweenMany('[', ']')->toArray();
         self::assertEquals($expected, $response);
     }
 
     public function testBetweenManyNestedFails(): void
     {
         $input = '[Here [is] [more] than one].';
-        $str = SuperString::create($input);
+        $text = Text::create($input);
         $this->expectExceptionMessage('Nested delimiters not supported');
-        $str->betweenMany('[', ']')->toArray();
+        $text->betweenMany('[', ']')->toArray();
     }
 
     public function testAllButTheLast(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::ALL_BUT_THE_LAST_THREE, $str->allButTheLast(3)->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::ALL_BUT_THE_LAST_THREE, $text->allButTheLast(3)->toString());
     }
 
     public function testUppercase(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::UPPER_CASE, $str->uppercase()->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::UPPER_CASE, $text->uppercase()->toString());
     }
 
     public function testLowercase(): void
     {
-        $str = SuperString::create(self::STRING);
-        self::assertEquals(self::LOWER_CASE, $str->lowercase()->toString());
+        $text = Text::create(self::STRING);
+        self::assertEquals(self::LOWER_CASE, $text->lowercase()->toString());
     }
 
     public function testTrim(): void
     {
-        $str = SuperString::create(self::NEEDS_TRIMMING);
-        self::assertEquals(self::TRIMMED, $str->trim()->toString());
+        $text = Text::create(self::NEEDS_TRIMMING);
+        self::assertEquals(self::TRIMMED, $text->trim()->toString());
     }
 
     public function testReplaceOne(): void
@@ -282,8 +282,8 @@ class SuperStringTest extends TestCase
         $textToReplace = 'foo';
         $replacement = 'baz';
         $result = 'baz foo bar';
-        $str = SuperString::create($startString);
-        self::assertEquals($result, $str->replaceOne($textToReplace, $replacement)->toString());
+        $text = Text::create($startString);
+        self::assertEquals($result, $text->replaceOne($textToReplace, $replacement)->toString());
     }
 
     public function testReplaceAll(): void
@@ -292,8 +292,8 @@ class SuperStringTest extends TestCase
         $textToReplace = 'foo';
         $replacement = 'baz';
         $result = 'baz baz bar';
-        $str = SuperString::create($startString);
-        self::assertEquals($result, $str->replaceAll($textToReplace, $replacement)->toString());
+        $text = Text::create($startString);
+        self::assertEquals($result, $text->replaceAll($textToReplace, $replacement)->toString());
     }
 
     public function testCamelCase(): void
@@ -302,50 +302,50 @@ class SuperStringTest extends TestCase
         $camel = 'thisIsAString';
         $weird = 'This& is* a{ string ';
         $weirdCamel = 'this_Is_A_String';
-        $str = SuperString::create($startString);
-        self::assertEquals($camel, $str->camelCase()->toString());
-        $str = SuperString::create($weird);
-        self::assertEquals($weirdCamel, $str->camelCase()->toString());
+        $text = Text::create($startString);
+        self::assertEquals($camel, $text->camelCase()->toString());
+        $text = Text::create($weird);
+        self::assertEquals($weirdCamel, $text->camelCase()->toString());
     }
 
     public function testSnakeCase(): void
     {
         $startString = 'This is a string';
         $snake = 'this_is_a_string';
-        $str = SuperString::create($startString);
-        self::assertEquals($snake, $str->snakeCase()->toString());
+        $text = Text::create($startString);
+        self::assertEquals($snake, $text->snakeCase()->toString());
     }
 
     public function testTitleCase(): void
     {
         $startString = 'This is a string';
         $title = 'This Is A String';
-        $str = SuperString::create($startString);
-        self::assertEquals($title, $str->titleCase()->toString());
+        $text = Text::create($startString);
+        self::assertEquals($title, $text->titleCase()->toString());
     }
 
     public function testReplaceSpecialCharacters(): void
     {
         $withSpecials = 'This& is* a{ string';
         $replacedWithEmptyString = 'This is a string';
-        $str = SuperString::create($withSpecials);
-        self::assertEquals($replacedWithEmptyString, $str->replaceSpecialCharacters('')->toString());
+        $text = Text::create($withSpecials);
+        self::assertEquals($replacedWithEmptyString, $text->replaceSpecialCharacters('')->toString());
     }
 
     public function testRegexReplaceOne(): void
     {
         $startString = 'This were a string were';
         $replaced = 'This foo a string were';
-        $str = SuperString::create($startString);
-        self::assertEquals($replaced, $str->regexReplaceOne('foo', '/were/')->toString());
+        $text = Text::create($startString);
+        self::assertEquals($replaced, $text->regexReplaceOne('foo', '/were/')->toString());
     }
 
     public function testRegexReplaceAll(): void
     {
         $startString = 'This were a string were';
         $replaced = 'This foo a string foo';
-        $str = SuperString::create($startString);
-        self::assertEquals($replaced, $str->regexReplaceAll('foo', '/were/')->toString());
+        $text = Text::create($startString);
+        self::assertEquals($replaced, $text->regexReplaceAll('foo', '/were/')->toString());
     }
 
     public function testSwapText(): void
@@ -355,21 +355,21 @@ class SuperStringTest extends TestCase
         $left = 'This';
         $right = 'string';
         $swapped = 'string/This';
-        $str = SuperString::create($regular);
-        self::assertEquals($swapped, $str->swapText($left, $right)->toString());
+        $text = Text::create($regular);
+        self::assertEquals($swapped, $text->swapText($left, $right)->toString());
 
         $left = 'This';
         $right = 'string';
         $swapped = 'string/This';
-        $str = SuperString::create($regular);
-        self::assertEquals($swapped, $str->swapText($right, $left)->toString());
+        $text = Text::create($regular);
+        self::assertEquals($swapped, $text->swapText($right, $left)->toString());
 
         $regular = 'duck duck goose';
         $left = 'duck';
         $right = 'goose';
         $swapped = 'goose duck duck';
-        $str = SuperString::create($regular);
-        self::assertEquals($swapped, $str->swapText($right, $left)->toString());
+        $text = Text::create($regular);
+        self::assertEquals($swapped, $text->swapText($right, $left)->toString());
     }
 
     public function testSplit(): void
@@ -380,9 +380,9 @@ class SuperStringTest extends TestCase
             'String B',
             'String C'
         ];
-        $str = SuperString::create($input);
-        self::assertEquals($result, $str->split('/')->toArray());
-        self::assertEquals([$input], $str->split('.')->toArray());
+        $text = Text::create($input);
+        self::assertEquals($result, $text->split('/')->toArray());
+        self::assertEquals([$input], $text->split('.')->toArray());
     }
 }
 
