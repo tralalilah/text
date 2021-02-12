@@ -31,7 +31,7 @@ class RegEx
         $escapeLeft = self::escape($left);
         $escapeRight = self::escape($right);
         $pattern = "/(.*?)*({$escapeLeft}){1}(.*?)({$escapeRight}){1}(.*)/";
-        return preg_replace($pattern, '$1$4$3$2$5', $subject);
+        return (string)preg_replace($pattern, '$1$4$3$2$5', $subject);
     }
 
     /**
@@ -62,6 +62,6 @@ class RegEx
      */
     public static function replaceSpecialCharacters(string $subject, string $replacement): string
     {
-        return preg_replace('/[^ A-Za-z0-9\-_]/', $replacement, $subject);
+        return (string)preg_replace('/[^ A-Za-z0-9\-_]/', $replacement, $subject);
     }
 }

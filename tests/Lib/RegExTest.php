@@ -32,7 +32,7 @@ class RegExTest extends TestCase
         self::assertEquals($expected, RegEx::between($left, $right, $subject));
     }
 
-    public function testReplaceSpecialCharacters()
+    public function testReplaceSpecialCharacters(): void
     {
         $subject = 'This& is* a{ string';
         $replacement = '';
