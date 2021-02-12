@@ -10,7 +10,7 @@ use Tightenco\Collect\Support\Collection;
 
 /**
  * Class TextCollection
- * @package Midwinter\Text
+ * @package TraLaLilah\Text
  *
  * @method TextCollection uppercase() Converts all strings to uppercase
  * @method TextCollection lowercase() Converts all strings to lowercase

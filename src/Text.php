@@ -11,7 +11,8 @@ use Throwable;
 
 /**
  * Class Text
- * @package Midwinter\Text
+ * @package TraLaLilah\Text
+ * @package TraLaLilah\Text
  **/
 final class Text implements JsonSerializable
 {
