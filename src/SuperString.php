@@ -5,6 +5,7 @@ namespace Midwinter\SuperString;
 use Assert\Assertion;
 use Assert\InvalidArgumentException;
 use JsonSerializable;
+use Midwinter\SuperString\Lib\RegEx;
 use Throwable;
 
 /**
@@ -92,6 +93,12 @@ final class SuperString implements JsonSerializable
         return (int)strpos($this->value, $string);
     }
 
+    public function lastPositionOf(string $string): int
+    {
+        Assertion::contains($this->value, $string, 'Given string does not appear');
+        return (int)$this->length() - strlen($string) - strpos(strrev($this->value), strrev($string));
+    }
+
     public function characterAt(int $position): string
     {
         Assertion::lessThan($position, $this->length(), 'Position must be less than string length');
@@ -117,6 +124,13 @@ final class SuperString implements JsonSerializable
         return new self(substr($this->value, -$chars));
     }
 
+    public function count(string $string): int
+    {
+        $escapeString = RegEx::escape($string);
+        $pattern = '/' . $escapeString . '/';
+        return (int)preg_match_all($pattern, $this->value);
+    }
+
     public function before(string $string): SuperString
     {
        Assertion::contains($this->value, $string, 'Must contain the string argument');
@@ -139,6 +153,53 @@ final class SuperString implements JsonSerializable
     {
         Assertion::lessOrEqualThan($chars, $this->length(), '$chars must be not be longer than string length');
         return new self(substr($this->value, 0, -$chars));
+    }
+
+    public function between(string $left, string $right, int $offset = 0): SuperString
+    {
+        $value = $this->allButTheFirst($offset)->toString();
+
+        if ($left === $right){
+            Assertion::greaterThan($this->count($left), 1, 'Only one delimiter exists');
+        }
+        $leftPos = strpos($value, $left);
+        $rightPos = strpos($value, $right);
+        if ($leftPos === FALSE || $rightPos === FALSE){
+            throw new InvalidArgumentException('Both delimiters must appear in string', 400);
+        }
+        Assertion::lessOrEqualThan($leftPos, $rightPos, 'Left delimiter must occur before right delimiter in string');
+
+        $leftEscaped = Lib\RegEx::escape($left);
+        $rightEscaped = Lib\RegEx::escape($right);
+
+        $pattern = "/(.*?)*({$leftEscaped}){1}(.*?)({$rightEscaped}){1}(.*)/";
+        $matches = [];
+        preg_match($pattern, $value, $matches);
+        return SuperString::create($matches[3]);
+    }
+
+    /**
+     * Return every string found between the two tokens. Does not support nesting delimiters.
+     * @param string $left
+     * @param string $right
+     * @return SuperStringCollection
+     * @throws \Assert\AssertionFailedException
+     */
+    public function betweenMany(string $left, string $right): SuperStringCollection
+    {
+        $arr = [];
+        $offset = 0;
+        $lastPositionOfRight = $this->lastPositionOf($right);
+        while ($offset < $lastPositionOfRight){
+            $between = $this->between($left, $right, $offset);
+            if(strpos($between->toString(), $left) !== FALSE){
+                throw new InvalidArgumentException('Nested delimiters not supported', 400);
+            }
+
+            $arr[] = $between;
+            $offset = $this->positionOf($left . $between->toString() . $right) + $between->length() + strlen($right) + 1;
+        }
+        return SuperStringCollection::wrap($arr);
     }
 
     public function uppercase(): SuperString

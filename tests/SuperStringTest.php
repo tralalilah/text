@@ -109,6 +109,23 @@ class SuperStringTest extends TestCase
         $str->positionOf(self::DOES_NOT_CONTAIN_CASE_SENSE);
     }
 
+    public function testLastPositionOf(): void
+    {
+        $input = 'foo foo foo';
+        $search = 'foo';
+        $lastPos = 8;
+
+        $input2 = '[Here] you [are]';
+        $search2 = ']';
+        $lastPos2 = 15;
+
+        $str = SuperString::create($input);
+        self::assertEquals($lastPos, $str->lastPositionOf($search));
+
+        $str2 = SuperString::create($input2);
+        self::assertEquals($lastPos2, $str2->lastPositionOf($search2));
+    }
+
     public function testCharacterAt(): void
     {
         $string = 'ABCDE';
@@ -151,6 +168,88 @@ class SuperStringTest extends TestCase
     {
         $str = SuperString::create(self::STRING);
         self::assertEquals(self::ALL_BUT_THE_FIRST_THREE, $str->allButTheFirst(3)->toString());
+    }
+
+    public function testCount(): void
+    {
+        $input = 'a abc abcd';
+        $check = 'a';
+        $checkNone = 'e';
+
+        $str = SuperString::create($input);
+        self::assertEquals(3, $str->count($check));
+        self::assertEquals(0, $str->count($checkNone));
+    }
+
+    public function testBetween(): void
+    {
+        $inputDifferent = 'Looking for text -between? two other strings';
+        $inputSame = 'Looking for text -between- two other strings';
+        $inputNoBuffer = '%between%';
+        $inputNoMatch = '%%';
+        $inputOneToken = 'missing %one token';
+        $between = 'between';
+
+        $str = SuperString::create($inputDifferent);
+        self::assertEquals($between, $str->between('-', '?')->toString());
+
+        $str = SuperString::create($inputSame);
+        self::assertEquals($between, $str->between('-', '-')->toString());
+
+        $str = SuperString::create($inputNoBuffer);
+        self::assertEquals($between, $str->between('%', '%')->toString());
+
+        $str = SuperString::create($inputNoMatch);
+        self::assertEquals('', $str->between('%', '%')->toString());
+
+        $str = SuperString::create($inputOneToken);
+        $this->expectException(InvalidArgumentException::class);
+        $str->between('%', '%');
+    }
+
+    public function testBetweenMoreThanOneMatch(): void
+    {
+        $input = '[Here] is [more] than one.';
+        $str = SuperString::create($input);
+        $response = $str->between('[', ']')->toString();
+        self::assertEquals('Here', $response);
+    }
+
+    public function testBetweenNoTokensDifferent(): void
+    {
+        $inputNoTokens = 'missing tokens';
+        $str = SuperString::create($inputNoTokens);
+        $this->expectException(InvalidArgumentException::class);
+        $str->between('%', '?');
+    }
+
+    public function testBetweenNoTokensSame(): void
+    {
+        $inputNoTokens = 'missing tokens';
+        $str = SuperString::create($inputNoTokens);
+
+        $this->expectException(InvalidArgumentException::class);
+        $str->between('%', '%');
+    }
+
+    public function testBetweenMany(): void
+    {
+        $input = '[Here] is [more] than one.';
+        $expected = [
+            'Here',
+            'more'
+        ];
+        $str = SuperString::create($input);
+        $response = $str->betweenMany('[', ']')->toArray();
+        self::assertEquals($expected, $response);
+    }
+
+    public function testBetweenManyNestedFails(): void
+    {
+        $input = '[Here [is] [more] than one].';
+        $str = SuperString::create($input);
+        $this->expectExceptionMessage('Nested delimiters not supported');
+        $str->betweenMany('[', ']')->toArray();
     }
 
     public function testAllButTheLast(): void

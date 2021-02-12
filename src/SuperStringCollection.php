@@ -73,7 +73,7 @@ class SuperStringCollection implements Countable, JsonSerializable
      */
     public function count()
     {
-        return count($this->toArray());
+        return count($this->collection);
     }
 
     /**

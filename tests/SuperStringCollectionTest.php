@@ -46,6 +46,12 @@ class SuperStringCollectionTest extends TestCase
         self::assertEquals(self::BASIC_ARRAY, $collection->toArray());
     }
 
+    public function testCount(): void
+    {
+        $collection = SuperStringCollection::wrap(self::BASIC_ARRAY);
+        self::assertEquals(3, $collection->count());
+    }
+
     public function testAnyElementEquals(): void
     {
         $collection = SuperStringCollection::wrap(self::BASIC_ARRAY);
