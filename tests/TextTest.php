@@ -329,7 +329,7 @@ class TextTest extends TestCase
         $withSpecials = 'This& is* a{ string';
         $replacedWithEmptyString = 'This is a string';
         $text = Text::create($withSpecials);
-        self::assertEquals($replacedWithEmptyString, $text->replaceSpecialCharacters('')->toString());
+        self::assertEquals($replacedWithEmptyString, $text->replaceSpecialCharacters()->toString());
     }
 
     public function testRegexReplaceOne(): void
@@ -356,20 +356,20 @@ class TextTest extends TestCase
         $right = 'string';
         $swapped = 'string/This';
         $text = Text::create($regular);
-        self::assertEquals($swapped, $text->swapText($left, $right)->toString());
+        self::assertEquals($swapped, $text->swap($left, $right)->toString());
 
         $left = 'This';
         $right = 'string';
         $swapped = 'string/This';
         $text = Text::create($regular);
-        self::assertEquals($swapped, $text->swapText($right, $left)->toString());
+        self::assertEquals($swapped, $text->swap($right, $left)->toString());
 
         $regular = 'duck duck goose';
         $left = 'duck';
         $right = 'goose';
         $swapped = 'goose duck duck';
         $text = Text::create($regular);
-        self::assertEquals($swapped, $text->swapText($right, $left)->toString());
+        self::assertEquals($swapped, $text->swap($right, $left)->toString());
     }
 
     public function testSplit(): void
