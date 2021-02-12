@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\Text\tests;
+namespace TraLaLilah\Text\tests;
 
-use Midwinter\Text\Text;
-use Midwinter\Text\TextCollection;
+use TraLaLilah\Text\Text;
+use TraLaLilah\Text\TextCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Exception\Doubler\MethodNotFoundException;
 

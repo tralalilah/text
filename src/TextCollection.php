@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\Text;
+namespace TraLaLilah\Text;
 
 use Assert\Assertion;
 use Countable;

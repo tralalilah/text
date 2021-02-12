@@ -1,5 +1,5 @@
 {
-    "name": "midwinter/text",
+    "name": "tralalilah/text",
     "description": "String manipulation package for development",
     "version": "0.1.0",
     "type": "library",
@@ -30,12 +30,12 @@
 
     "autoload": {
         "psr-4": {
-            "Midwinter\\Text\\": "src"
+            "TraLaLilah\\Text\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Midwinter\\Text\\tests\\": "tests"
+            "TraLaLilah\\Text\\tests\\": "tests"
         }
     },
     "require-dev": {

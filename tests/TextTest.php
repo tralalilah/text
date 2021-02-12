@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\Text\tests;
+namespace TraLaLilah\Text\tests;
 
 use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException;
-use Midwinter\Text\Text;
+use TraLaLilah\Text\Text;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase

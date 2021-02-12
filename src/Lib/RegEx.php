@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\Text\Lib;
+namespace TraLaLilah\Text\Lib;
 
 class RegEx
 {

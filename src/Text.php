@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Midwinter\Text;
+namespace TraLaLilah\Text;
 
 use Assert\Assertion;
 use Assert\InvalidArgumentException;
 use JsonSerializable;
-use Midwinter\Text\Lib\RegEx;
+use TraLaLilah\Text\Lib\RegEx;
 use Throwable;
 
 /**
