@@ -108,6 +108,20 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
+     * Returns the length of the longest string in the collection
+     * @return int
+     */
+    public function maxLength(): int
+    {
+        return ($this->collection->reduce( function(int $current, Text $item){
+            if ($item->length() > $current){
+                return $item->length();
+            }
+            return $current;
+        }, 0));
+    }
+
+    /**
      * Returns true if any of the strings equals the value passed as $value
      * @param string $value
      * @return bool
@@ -161,7 +175,7 @@ class TextCollection implements Countable, JsonSerializable
      * Sorts the collection alphabetically
      * @return TextCollection
      */
-    public function sort(): self
+    public function sort(): TextCollection
     {
         $arr = $this->toArray();
         sort($arr);
@@ -181,6 +195,30 @@ class TextCollection implements Countable, JsonSerializable
     public function unique(): TextCollection
     {
         return TextCollection::wrap(array_unique($this->toArray()));
+    }
+
+    /**
+     * Adjusts the length of each Text to be the length of the longest, by padding right
+     * @return TextCollection
+     */
+    public function leftJustify(): TextCollection
+    {
+        $padLength = $this->maxLength();
+        return $this->map(function(Text $item) use($padLength){
+            return $item->rightPad($padLength);
+        });
+    }
+
+    /**
+     * Adjusts the length of each Text to be the length of the longest, by padding left
+     * @return TextCollection
+     */
+    public function rightJustify(): TextCollection
+    {
+        $padLength = $this->maxLength();
+        return $this->map(function(Text $item) use($padLength){
+            return $item->leftPad($padLength);
+        });
     }
 
     /**

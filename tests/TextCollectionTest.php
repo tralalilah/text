@@ -52,13 +52,23 @@ class TextCollectionTest extends TestCase
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         $collection->add(Text::create('bash'));
         self::assertCount(4, $collection);
-
     }
 
     public function testCount(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(3, $collection->count());
+    }
+
+    public function testMaxLength(): void
+    {
+        $variousLengths = [
+            '1',
+            '12345678',
+            '123'
+        ];
+        $collection = TextCollection::wrap($variousLengths);
+        self::assertEquals(8, $collection->maxLength());
     }
 
     public function testAnyElementEquals(): void
@@ -132,6 +142,40 @@ class TextCollectionTest extends TestCase
         $joined = 'foo-bar-baz';
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals($joined, $collection->join('-')->toString());
+    }
+
+    public function testLeftJustify(): void
+    {
+        $input = [
+            '1',
+            '22',
+            '55555'
+        ];
+
+        $expected = [
+            '1    ',
+            '22   ',
+            '55555'
+        ];
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($expected, $collection->leftJustify()->toArray());
+    }
+
+    public function testRightJustify(): void
+    {
+        $input = [
+            '1',
+            '22',
+            '55555'
+        ];
+
+        $expected = [
+            '    1',
+            '   22',
+            '55555'
+        ];
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($expected, $collection->rightJustify()->toArray());
     }
 
     public function testMagicMethods(): void

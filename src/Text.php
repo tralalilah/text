@@ -12,7 +12,6 @@ use Throwable;
 /**
  * Class Text
  * @package TraLaLilah\Text
- * @package TraLaLilah\Text
  **/
 final class Text implements JsonSerializable
 {
@@ -330,6 +329,16 @@ final class Text implements JsonSerializable
         return new self(trim($this->value));
     }
 
+    public function leftPad(int $length, string $padding = ' '): Text
+    {
+        return new self(str_pad($this->value, $length, $padding, STR_PAD_LEFT));
+    }
+
+    public function rightPad(int $length, string $padding = ' '): Text
+    {
+        return new self(str_pad($this->value, $length, $padding, STR_PAD_RIGHT));
+    }
+
     /**
      * @param string $textToReplace
      * @param string $replacement
@@ -428,5 +437,14 @@ final class Text implements JsonSerializable
     {
         $array = explode($separator, $this->value);
         return TextCollection::wrap($array);
+    }
+
+    public static function pluralizeCount(int $count, string $singular, string $plural): string
+    {
+        if ($count === 1){
+            return "$count $singular";
+        } else {
+            return "$count $plural";
+        }
     }
 }

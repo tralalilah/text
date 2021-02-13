@@ -276,6 +276,25 @@ class TextTest extends TestCase
         self::assertEquals(self::TRIMMED, $text->trim()->toString());
     }
 
+    public function testLeftPad(): void
+    {
+        $text = 'length_is11';
+        $length = 15;
+        $expected = '    length_is11';
+        $text = Text::create($text);
+        self::assertEquals($expected, $text->leftPad($length)->toString());
+    }
+
+    public function testRightPad(): void
+    {
+        $text = 'length_is11';
+        $length = 15;
+        $expected = 'length_is11    ';
+        $text = Text::create($text);
+        self::assertEquals($expected, $text->rightPad($length)->toString());
+    }
+
+
     public function testReplaceOne(): void
     {
         $startString = 'foo foo bar';
@@ -405,6 +424,27 @@ class TextTest extends TestCase
 
         $collection = Text::create($text)->mailMerge($tokens, $data, '[', ']');
         self::assertEquals($expected, $collection->toArray());
+    }
+
+    public function testPluralizeCount(): void
+    {
+        $count = 1;
+        $singular = 'item';
+        $plural = 'items';
+        $expected = '1 item';
+        self::assertEquals($expected, Text::pluralizeCount($count, $singular, $plural));
+
+        $count = 2;
+        $singular = 'item';
+        $plural = 'items';
+        $expected = '2 items';
+        self::assertEquals($expected, Text::pluralizeCount($count, $singular, $plural));
+
+        $count = 0;
+        $singular = 'item';
+        $plural = 'items';
+        $expected = '0 items';
+        self::assertEquals($expected, Text::pluralizeCount($count, $singular, $plural));
     }
 }
 
