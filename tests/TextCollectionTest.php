@@ -24,7 +24,7 @@ class TextCollectionTest extends TestCase
     public function testCreate(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
-        self::assertInstanceOf( TextCollection::class, $collection);
+        self::assertInstanceOf(TextCollection::class, $collection);
     }
 
     public function testAssociativeArraysLoseKeys(): void
@@ -58,6 +58,22 @@ class TextCollectionTest extends TestCase
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(3, $collection->count());
+    }
+
+    public function testLengths(): void
+    {
+        $variousLengths = [
+            '1',
+            '12345678',
+            '123'
+        ];
+        $expected = [
+            1,
+            8,
+            3
+        ];
+        $collection = TextCollection::wrap($variousLengths);
+        self::assertEquals($expected, $collection->lengths());
     }
 
     public function testMaxLength(): void
@@ -100,7 +116,13 @@ class TextCollectionTest extends TestCase
     public function testMap(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
-        self::assertEquals(self::TO_UPPERCASE, $collection->map(function ($item) { return $item->uppercase(); })->toArray());
+        self::assertEquals(
+            self::TO_UPPERCASE, $collection->map(
+                function ($item) {
+                    return $item->uppercase(); 
+                }
+            )->toArray()
+        );
     }
 
     public function testFilter(): void
@@ -110,7 +132,13 @@ class TextCollectionTest extends TestCase
             'bar'
         ];
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
-        self::assertEquals($filtered, $collection->filter(function ($item) { return $item->toString() !== 'baz'; })->toArray());
+        self::assertEquals(
+            $filtered, $collection->filter(
+                function ($item) {
+                    return $item->toString() !== 'baz'; 
+                }
+            )->toArray()
+        );
     }
 
     public function testAlphabetize(): void
@@ -180,13 +208,37 @@ class TextCollectionTest extends TestCase
 
     public function testMagicMethods(): void
     {
-        $collection = TextCollection::wrap(self::BASIC_ARRAY);
-        self::assertEquals(self::TO_UPPERCASE, $collection->uppercase()->toArray());
+        $input = [
+            'This is a string',
+            'THIS IS A STRING',
+            'this is a string'
+            ];
+        $allUppercase = [
+            'THIS IS A STRING',
+            'THIS IS A STRING',
+            'THIS IS A STRING'
+        ];
+        $allLowercase = [
+            'this is a string',
+            'this is a string',
+            'this is a string'
+        ];
+        $allSlugs = [
+            'this-is-a-string',
+            'this-is-a-string',
+            'this-is-a-string'
+        ];
 
-        $collection = TextCollection::wrap(self::BASIC_ARRAY);
-        self::assertEquals(self::BASIC_ARRAY, $collection->uppercase()->lowercase()->toArray());
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($allUppercase, $collection->uppercase()->toArray());
 
-        $collection = TextCollection::wrap(self::BASIC_ARRAY);
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($allLowercase, $collection->lowercase()->toArray());
+
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($allSlugs, $collection->slug()->toArray());
+
+        $collection = TextCollection::wrap($input);
         $this->expectException(MethodNotFoundException::class);
         $collection->missingMethod();
     }

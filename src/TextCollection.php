@@ -10,6 +10,7 @@ use Tightenco\Collect\Support\Collection;
 
 /**
  * Class TextCollection
+ *
  * @package TraLaLilah\Text
  *
  * @method TextCollection uppercase() Converts all strings to uppercase
@@ -17,6 +18,7 @@ use Tightenco\Collect\Support\Collection;
  * @method TextCollection snakeCase() Converts all strings to snake_case
  * @method TextCollection camelCase() Converts all strings to camelCase
  * @method TextCollection titleCase() Converts all strings to Title Case
+ * @method TextCollection slug() Converts all strings to slugs
  * @method TextCollection replaceSpecialCharacters(string $replacement) Replace special characters with provided replacement
  * @method TextCollection trim() Trims all strings
  * @method TextCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each string
@@ -28,6 +30,7 @@ class TextCollection implements Countable, JsonSerializable
     private const AVAILABLE_METHODS = [
         'uppercase',
         'lowercase',
+        'slug',
         'snakeCase',
         'camelCase',
         'titleCase',
@@ -44,7 +47,8 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Returns a new instance of TextCollection.
-     * @param mixed $array Contents can be of mixed types. Associative arrays will lose string keys.
+     *
+     * @param  mixed $array Contents can be of mixed types. Associative arrays will lose string keys.
      * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
@@ -64,6 +68,7 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * TextCollection constructor.
+     *
      * @param mixed[] $inputs
      */
     private function __construct(array $inputs)
@@ -82,6 +87,7 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Implements Countable interface
+     *
      * @return int
      */
     public function count()
@@ -91,6 +97,7 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Implements JsonSerialize interface
+     *
      * @return array[]
      */
     public function jsonSerialize()
@@ -100,6 +107,7 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Outputs the content of the collection as an array of strings
+     *
      * @return array[]
      */
     public function toArray(): array
@@ -108,52 +116,92 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
+     * Returns an array containing the length of each string
+     *
+     * @return int[]
+     */
+    public function lengths(): array
+    {
+        return array_map(
+            function (Text $item) {
+                return $item->length();
+            },
+            $this->collection->toArray()
+        );
+    }
+
+    /**
      * Returns the length of the longest string in the collection
+     *
      * @return int
      */
     public function maxLength(): int
     {
-        return ($this->collection->reduce( function(int $current, Text $item){
-            if ($item->length() > $current){
-                return $item->length();
-            }
-            return $current;
-        }, 0));
+        return ($this->collection->reduce(
+            function (int $current, Text $item) {
+                if ($item->length() > $current) {
+                      return $item->length();
+                }
+                return $current;
+            }, 0
+        ));
     }
 
     /**
      * Returns true if any of the strings equals the value passed as $value
-     * @param string $value
+     *
+     * @param  string $value
      * @return bool
      */
     public function anyElementEquals(string $value): bool
     {
-        return count($this->filter(function($item) use ($value) { return $item->toString() === $value; })->toArray()) > 0;
+        return count(
+            $this->filter(
+                function ($item) use ($value) {
+                    return $item->toString() === $value; 
+                }
+            )->toArray()
+        ) > 0;
     }
 
     /**
      * Returns true if any of the strings contains the value passed as $value
-     * @param string $value
+     *
+     * @param  string $value
      * @return bool
      */
     public function anyElementContains(string $value): bool
     {
-        return count($this->filter(function($item) use ($value) { return $item->contains($value); })) > 0;
+        return count(
+            $this->filter(
+                function ($item) use ($value) {
+                    return $item->contains($value); 
+                }
+            )
+        ) > 0;
     }
 
     /**
      * Returns true if all of the strings contain the value passed as $value
-     * @param string $value
+     *
+     * @param  string $value
      * @return bool
      */
     public function allElementsContain(string $value): bool
     {
-        return count($this->filter(function($item) use ($value) { return $item->contains($value); })) === count($this);
+        return count(
+            $this->filter(
+                function ($item) use ($value) {
+                    return $item->contains($value); 
+                }
+            )
+        ) === count($this);
     }
 
     /**
      * Exposes map() method of Collection. Returns a new TextCollection with the results of the map operation.
-     * @param callable $function
+     *
+     * @param  callable $function
      * @return TextCollection
      */
     public function map(callable $function)
@@ -163,7 +211,8 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Exposes filter() method of Collection. Returns a new TextCollection with the filtered results.
-     * @param callable $function
+     *
+     * @param  callable $function
      * @return TextCollection
      */
     public function filter(callable $function)
@@ -173,6 +222,7 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Sorts the collection alphabetically
+     *
      * @return TextCollection
      */
     public function sort(): TextCollection
@@ -189,6 +239,7 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Removes duplicate elements of the collection
+     *
      * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
@@ -199,42 +250,52 @@ class TextCollection implements Countable, JsonSerializable
 
     /**
      * Adjusts the length of each Text to be the length of the longest, by padding right
+     *
      * @return TextCollection
      */
     public function leftJustify(): TextCollection
     {
         $padLength = $this->maxLength();
-        return $this->map(function(Text $item) use($padLength){
-            return $item->rightPad($padLength);
-        });
+        return $this->map(
+            function (Text $item) use ($padLength) {
+                return $item->rightPad($padLength);
+            }
+        );
     }
 
     /**
      * Adjusts the length of each Text to be the length of the longest, by padding left
+     *
      * @return TextCollection
      */
     public function rightJustify(): TextCollection
     {
         $padLength = $this->maxLength();
-        return $this->map(function(Text $item) use($padLength){
-            return $item->leftPad($padLength);
-        });
+        return $this->map(
+            function (Text $item) use ($padLength) {
+                return $item->leftPad($padLength);
+            }
+        );
     }
 
     /**
-     * @param string $method
-     * @param string[] $args
+     * @param  string   $method
+     * @param  string[] $args
      * @return TextCollection
      */
     public function __call(string $method, array $args): TextCollection
     {
         $result = null;
         if (in_array($method, self::AVAILABLE_METHODS)) {
-            $result = $this->collection->map(function($item) use ($method, $args) {
-                /** @var callable $callback */
-                $callback = [$item, $method];
-                return call_user_func($callback, $args );
-            });
+            $result = $this->collection->map(
+                function ($item) use ($method, $args) {
+                    /**
+                * @var callable $callback 
+                */
+                    $callback = [$item, $method];
+                    return call_user_func($callback, $args);
+                }
+            );
         } else {
             throw new MethodNotFoundException('No such method', TextCollection::class, $method);
         }

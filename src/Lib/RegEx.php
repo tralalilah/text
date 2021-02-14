@@ -8,7 +8,7 @@ use Assert\Assertion;
 class RegEx
 {
     /**
-     * @param string $subject
+     * @param  string $subject
      * @return string
      */
     public static function escape(string $subject): string
@@ -17,9 +17,9 @@ class RegEx
     }
 
     /**
-     * @param string $left
-     * @param string $right
-     * @param string $subject
+     * @param  string $left
+     * @param  string $right
+     * @param  string $subject
      * @return string
      * @throws \Assert\AssertionFailedException
      */
@@ -35,9 +35,9 @@ class RegEx
     }
 
     /**
-     * @param string $left
-     * @param string $right
-     * @param string $subject
+     * @param  string $left
+     * @param  string $right
+     * @param  string $subject
      * @return string
      * @throws \Assert\AssertionFailedException
      */
@@ -56,8 +56,8 @@ class RegEx
     }
 
     /**
-     * @param string $subject
-     * @param string $replacement
+     * @param  string $subject
+     * @param  string $replacement
      * @return string
      */
     public static function replaceSpecialCharacters(string $subject, string $replacement): string

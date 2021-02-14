@@ -44,10 +44,10 @@ class TextTest extends TestCase
     public function testFromBooleanOrNull(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Text::create(TRUE);
+        Text::create(true);
 
         $this->expectException(InvalidArgumentException::class);
-        Text::create(FALSE);
+        Text::create(false);
 
         $this->expectException(InvalidArgumentException::class);
         Text::create(null);
@@ -460,27 +460,6 @@ class TextTest extends TestCase
         $collection = Text::create($text)->mailMerge($tokens, $data, '[', ']');
         self::assertEquals($expected, $collection->toArray());
     }
-
-    public function testPluralizeCount(): void
-    {
-        $count = 1;
-        $singular = 'item';
-        $plural = 'items';
-        $expected = '1 item';
-        self::assertEquals($expected, Text::pluralizeCount($count, $singular, $plural));
-
-        $count = 2;
-        $singular = 'item';
-        $plural = 'items';
-        $expected = '2 items';
-        self::assertEquals($expected, Text::pluralizeCount($count, $singular, $plural));
-
-        $count = 0;
-        $singular = 'item';
-        $plural = 'items';
-        $expected = '0 items';
-        self::assertEquals($expected, Text::pluralizeCount($count, $singular, $plural));
-    }
 }
 
 class TestObjectToString
@@ -519,4 +498,6 @@ class TestObject__ToString
     }
 }
 
-class TestObjectWithNoMethods {}
+class TestObjectWithNoMethods
+{
+}

@@ -11,6 +11,7 @@ use Throwable;
 
 /**
  * Class Text
+ *
  * @package TraLaLilah\Text
  **/
 final class Text implements JsonSerializable
@@ -21,13 +22,13 @@ final class Text implements JsonSerializable
     private $value;
 
     /**
-     * @param mixed $value
+     * @param  mixed $value
      * @return static
      */
     public static function create($value): self
     {
-        if(is_object($value)){
-            if(method_exists($value, 'toString')){
+        if(is_object($value)) {
+            if(method_exists($value, 'toString')) {
                 $value = $value->toString();
             } elseif (method_exists($value, '__toString')) {
                 $value = $value->__toString();
@@ -35,7 +36,7 @@ final class Text implements JsonSerializable
                 throw new InvalidArgumentException('Input objects must hav a "toString()"  or "__toString()" method', 400);
             }
         }
-        if($value === true || $value === false){
+        if($value === true || $value === false) {
             throw new InvalidArgumentException('true and false are not acceptable input', 400);
         }
         return new static((string)$value);
@@ -43,6 +44,7 @@ final class Text implements JsonSerializable
 
     /**
      * Text constructor.
+     *
      * @param string|null $value
      */
     private function __construct(?string $value)
@@ -53,6 +55,7 @@ final class Text implements JsonSerializable
 
     /**
      * Clones the object into a new one
+     *
      * @return self
      */
     public function clone(): self
@@ -85,20 +88,20 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $string
-     * @param bool $caseSensitive
+     * @param  string $string
+     * @param  bool   $caseSensitive
      * @return bool
      */
     public function contains(string $string, bool $caseSensitive = true): bool
     {
         if (! $caseSensitive) {
-            return strpos(strtolower($this->value), strtolower($string)) !== FALSE;
+            return strpos(strtolower($this->value), strtolower($string)) !== false;
         }
-        return strpos($this->value, $string) !== FALSE;
+        return strpos($this->value, $string) !== false;
     }
 
     /**
-     * @param string $pattern
+     * @param  string $pattern
      * @return bool
      */
     public function containsRegex(string $pattern): bool
@@ -116,7 +119,7 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $string
+     * @param  string $string
      * @return int
      * @throws \Assert\AssertionFailedException
      */
@@ -127,7 +130,7 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $string
+     * @param  string $string
      * @return int
      * @throws \Assert\AssertionFailedException
      */
@@ -138,7 +141,7 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param int $position
+     * @param  int $position
      * @return string
      * @throws \Assert\AssertionFailedException
      */
@@ -150,35 +153,35 @@ final class Text implements JsonSerializable
 
 
     /**
-     * @param int $chars
+     * @param  int $chars
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
     public function first(int $chars): Text
     {
         Assertion::greaterOrEqualThan($chars, 0, 'Chars cannot be negative');
-        if ($chars > $this->length()){
+        if ($chars > $this->length()) {
             $chars = $this->length();
         }
         return new self(substr($this->value, 0, $chars));
     }
 
     /**
-     * @param int $chars
+     * @param  int $chars
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
     public function last(int $chars): Text
     {
         Assertion::greaterOrEqualThan($chars, 0, 'Chars cannot be negative');
-        if ($chars > $this->length()){
+        if ($chars > $this->length()) {
             $chars = $this->length();
         }
         return new self(substr($this->value, -$chars));
     }
 
     /**
-     * @param string $string
+     * @param  string $string
      * @return int
      */
     public function count(string $string): int
@@ -189,29 +192,29 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $string
+     * @param  string $string
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
     public function before(string $string): Text
     {
-       Assertion::contains($this->value, $string, 'Must contain the string argument');
-       return new self(substr($this->value, 0, $this->positionOf($string)));
+        Assertion::contains($this->value, $string, 'Must contain the string argument');
+        return new self(substr($this->value, 0, $this->positionOf($string)));
     }
 
     /**
-     * @param string $string
+     * @param  string $string
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
     public function after(string $string): Text
     {
-       Assertion::contains($this->value, $string, 'Must contain the string argument');
-       return new self(substr($this->value, $this->positionOf($string) - $this->length() + strlen($string)));
+        Assertion::contains($this->value, $string, 'Must contain the string argument');
+        return new self(substr($this->value, $this->positionOf($string) - $this->length() + strlen($string)));
     }
 
     /**
-     * @param int $chars
+     * @param  int $chars
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
@@ -222,7 +225,7 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param int $chars
+     * @param  int $chars
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
@@ -233,9 +236,9 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $left
-     * @param string $right
-     * @param int $offset
+     * @param  string $left
+     * @param  string $right
+     * @param  int    $offset
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
@@ -243,7 +246,7 @@ final class Text implements JsonSerializable
     {
         $value = $this->allButTheFirst($offset)->toString();
 
-        if ($left === $right){
+        if ($left === $right) {
             Assertion::greaterThan($this->count($left), 1, 'Only one delimiter exists');
         }
         Assertion::contains($this->value, $left, '"left" delimiter must exist in text');
@@ -255,8 +258,9 @@ final class Text implements JsonSerializable
 
     /**
      * Return every string found between the two tokens. Does not support nesting delimiters.
-     * @param string $left
-     * @param string $right
+     *
+     * @param  string $left
+     * @param  string $right
      * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
@@ -267,7 +271,7 @@ final class Text implements JsonSerializable
         $lastPositionOfRight = $this->lastPositionOf($right);
         while ($offset < $lastPositionOfRight){
             $between = $this->between($left, $right, $offset);
-            if(strpos($between->toString(), $left) !== FALSE){
+            if(strpos($between->toString(), $left) !== false) {
                 throw new InvalidArgumentException('Nested delimiters not supported', 400);
             }
 
@@ -377,8 +381,8 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $textToReplace
-     * @param string $replacement
+     * @param  string $textToReplace
+     * @param  string $replacement
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
@@ -390,8 +394,8 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $textToReplace
-     * @param string $replacement
+     * @param  string $textToReplace
+     * @param  string $replacement
      * @return Text
      */
     public function replaceAll(string $textToReplace, string $replacement): Text
@@ -400,39 +404,39 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $replacement
+     * @param  string $replacement
      * @return Text
      */
     public function replaceSpecialCharacters(string $replacement = ''): Text
     {
-        return new self (RegEx::replaceSpecialCharacters($this->value, $replacement));
+        return new self(RegEx::replaceSpecialCharacters($this->value, $replacement));
     }
 
     /**
-     * @param string $replacement
-     * @param string $pattern
+     * @param  string $replacement
+     * @param  string $pattern
      * @return Text
      */
     public function regexReplaceOne(string $replacement, string $pattern): Text
     {
-        return new self (preg_replace($pattern, $replacement, $this->value, 1));
+        return new self(preg_replace($pattern, $replacement, $this->value, 1));
     }
 
     /**
-     * @param string $replacement
-     * @param string $pattern
+     * @param  string $replacement
+     * @param  string $pattern
      * @return Text
      */
     public function regexReplaceAll(string $replacement, string $pattern): Text
     {
-        return new self (preg_replace($pattern, $replacement, $this->value));
+        return new self(preg_replace($pattern, $replacement, $this->value));
     }
 
     /**
-     * @param string[] $tokens
-     * @param array[] $replaceData
-     * @param string $leftDelimiter
-     * @param string $rightDelimiter
+     * @param  string[] $tokens
+     * @param  array[]  $replaceData
+     * @param  string   $leftDelimiter
+     * @param  string   $rightDelimiter
      * @return TextCollection
      * @throws \Assert\AssertionFailedException
      */
@@ -455,12 +459,12 @@ final class Text implements JsonSerializable
     public function swap(string $toBeSwapped, string $swapWith): Text
     {
         Assertion::contains($this->value, $toBeSwapped, '"to be swapped" value not found in string');
-        Assertion::contains($this->value, $swapWith,'"swap with" value not found in string');
+        Assertion::contains($this->value, $swapWith, '"swap with" value not found in string');
 
         $toBeSwappedPos = strpos($this->value, $toBeSwapped);
         $swapPos = strpos($this->value, $swapWith);
 
-        if($toBeSwappedPos < $swapPos){
+        if($toBeSwappedPos < $swapPos) {
             $left = $toBeSwapped;
             $right = $swapWith;
         } else {
@@ -474,14 +478,5 @@ final class Text implements JsonSerializable
     {
         $array = explode($separator, $this->value);
         return TextCollection::wrap($array);
-    }
-
-    public static function pluralizeCount(int $count, string $singular, string $plural): string
-    {
-        if ($count === 1){
-            return "$count $singular";
-        } else {
-            return "$count $plural";
-        }
     }
 }
