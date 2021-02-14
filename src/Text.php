@@ -277,6 +277,11 @@ final class Text implements JsonSerializable
         return TextCollection::wrap($arr);
     }
 
+    public function concatenate(Text $textToConcatenate): Text
+    {
+        return new self($this->value . $textToConcatenate->value);
+    }
+
     /**
      * @return Text
      */
@@ -293,16 +298,37 @@ final class Text implements JsonSerializable
         return new self(strtolower($this->value));
     }
 
+    public function lowercaseFirst(): Text
+    {
+        return $this
+            ->first(1)
+            ->lowercase()
+            ->concatenate(
+                $this
+                    ->uppercaseWords()
+                    ->allButTheFirst(1)
+            );
+    }
+
+    /**
+     * @return Text
+     */
+    public function uppercaseWords(): Text
+    {
+        return new self(ucwords(($this->value)));
+    }
+
     /**
      * @return Text
      * @throws \Assert\AssertionFailedException
      */
     public function camelCase(): Text
     {
-        $uppercaseWords = self::create(ucwords($this->value))
+        return $this
+            ->uppercaseWords()
+            ->replaceSpecialCharacters('')
             ->replaceAll(' ', '')
-            ->replaceSpecialCharacters('_');
-        return new self(strtolower(($this->first(1))->toString()) . $uppercaseWords->allButTheFirst(1)->toString());
+            ->lowercaseFirst();
     }
 
     /**
@@ -310,7 +336,18 @@ final class Text implements JsonSerializable
      */
     public function snakeCase(): Text
     {
-        return new self(strtolower($this->replaceAll(' ', '_')->replaceSpecialCharacters('')->toString()));
+        return $this
+            ->lowercase()
+            ->replaceAll(' ', '_')
+            ->replaceSpecialCharacters('');
+    }
+
+    public function slug(): Text
+    {
+        return $this
+            ->lowercase()
+            ->replaceAll(' ', '-')
+            ->replaceSpecialCharacters('');
     }
 
     /**
@@ -318,7 +355,7 @@ final class Text implements JsonSerializable
      */
     public function titleCase(): Text
     {
-        return new self(ucwords($this->toString()));
+        return $this->uppercaseWords();
     }
 
     /**

@@ -258,6 +258,16 @@ class TextTest extends TestCase
         self::assertEquals(self::ALL_BUT_THE_LAST_THREE, $text->allButTheLast(3)->toString());
     }
 
+    public function testConcatenate(): void
+    {
+        $input = 'This is ';
+        $concatenate = 'a string';
+        $expected = 'This is a string';
+        $text = Text::create($input);
+        $concatText = Text::create($concatenate);
+        self::assertEquals($expected, $text->concatenate($concatText)->toString());
+    }
+
     public function testUppercase(): void
     {
         $text = Text::create(self::STRING);
@@ -268,6 +278,22 @@ class TextTest extends TestCase
     {
         $text = Text::create(self::STRING);
         self::assertEquals(self::LOWER_CASE, $text->lowercase()->toString());
+    }
+
+    public function testLowercaseFirst(): void
+    {
+        $input = 'THIS IS A STRING';
+        $expected = 'tHIS IS A STRING';
+        $text = Text::create($input);
+        self::assertEquals($expected, $text->lowercaseFirst()->toString());
+    }
+
+    public function testUppercaseWords(): void
+    {
+        $input = 'these are some words';
+        $expected = 'These Are Some Words';
+        $text = Text::create($input);
+        self::assertEquals($expected, $text->uppercaseWords()->toString());
     }
 
     public function testTrim(): void
@@ -320,7 +346,7 @@ class TextTest extends TestCase
         $startString = 'This is a string';
         $camel = 'thisIsAString';
         $weird = 'This& is* a{ string ';
-        $weirdCamel = 'this_Is_A_String';
+        $weirdCamel = 'thisIsAString';
         $text = Text::create($startString);
         self::assertEquals($camel, $text->camelCase()->toString());
         $text = Text::create($weird);
@@ -337,10 +363,19 @@ class TextTest extends TestCase
 
     public function testTitleCase(): void
     {
-        $startString = 'This is a string';
+        $input = 'This is a string';
         $title = 'This Is A String';
-        $text = Text::create($startString);
+        $text = Text::create($input);
         self::assertEquals($title, $text->titleCase()->toString());
+    }
+
+    public function testSlug(): void
+    {
+        $input = 'This is a string';
+        $expected = 'this-is-a-string';
+        $text = Text::create($input);
+        self::assertEquals($expected, $text->slug()->toString());
+
     }
 
     public function testReplaceSpecialCharacters(): void
