@@ -160,7 +160,7 @@ final class Text implements JsonSerializable
     public function lastPositionOf(string $string): int
     {
         Assertion::contains($this->value, $string, 'Given string does not appear');
-        return strrpos($this->value, $string);
+        return (int)strrpos($this->value, $string);
     }
 
     /**
