@@ -554,29 +554,4 @@ class TextTest extends TestCase
         self::assertEquals($result, $text->split('/')->toArray());
         self::assertEquals([$input], $text->split('.')->toArray());
     }
-
-    /**
-     * @throws AssertionFailedException
-     */
-    public function testMailMerge(): void
-    {
-        $text = '[name], [address], [zip]';
-        $tokens = [
-            'name',
-            'address',
-            'zip'
-        ];
-        $data = [
-            ['Joe Blow', '123 Main Street', '12345'],
-            ['Jane Doe', '456 Elm Drive', '67890']
-        ];
-
-        $expected = [
-            'Joe Blow, 123 Main Street, 12345',
-            'Jane Doe, 456 Elm Drive, 67890'
-        ];
-
-        $collection = Text::create($text)->mailMerge($tokens, $data, '[', ']');
-        self::assertEquals($expected, $collection->toArray());
-    }
 }

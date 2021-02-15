@@ -25,10 +25,32 @@ class TextCollectionTest extends TestCase
     /**
      * @throws AssertionFailedException
      */
-    public function testCreate(): void
+    public function testWrap(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertInstanceOf(TextCollection::class, $collection);
+    }
+
+    public function testNotAnArrayThrowsException(): void
+    {
+        $input = 'string, not array';
+        $this->expectExceptionMessage('Input must be an array');
+        TextCollection::wrap($input);
+    }
+
+    public function testNestedArrayThrowsException(): void
+    {
+        $input = [
+            'String',
+            'String 2',
+            [
+                'Substring 1',
+                'Substring 2'
+            ]
+        ];
+
+        $this->expectExceptionMessage('Value at index 2 must not be an array');
+        TextCollection::wrap($input);
     }
 
     /**
@@ -407,6 +429,31 @@ class TextCollectionTest extends TestCase
 
         $collection = TextCollection::wrap($input);
         self::assertEquals($expected, $collection->last(3)->toArray());
+    }
+
+    /**
+     * @throws AssertionFailedException
+     */
+    public function testMailMerge(): void
+    {
+        $template = '[name] at [address], [zip]';
+        $tokens = [
+            'name',
+            'address',
+            'zip'
+        ];
+        $replaceData = [
+            ['Joe Blow', '123 Main Street', '12345'],
+            ['Jane Doe', '456 Elm Drive', '67890']
+        ];
+
+        $expected = [
+            'Joe Blow at 123 Main Street, 12345',
+            'Jane Doe at 456 Elm Drive, 67890'
+        ];
+
+        $collection = TextCollection::mailMerge($template, $tokens, $replaceData, '[', ']');
+        self::assertEquals($expected, $collection->toArray());
     }
 
     /**

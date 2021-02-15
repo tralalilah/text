@@ -4,6 +4,7 @@ namespace TraLaLilah\Text;
 
 use Assert\Assertion;
 use Assert\AssertionFailedException;
+use Assert\InvalidArgumentException;
 use Countable;
 use JsonSerializable;
 use Prophecy\Exception\Doubler\MethodNotFoundException;
@@ -57,13 +58,20 @@ class TextCollection implements Countable, JsonSerializable
     /**
      * Returns a new instance of TextCollection.
      *
-     * @param  mixed $array Contents can be of mixed types. Associative arrays will lose string keys.
+     * @param  mixed $array Contents can be of mixed types EXCEPT nested arrays.
+     * Associative arrays will lose string keys.
+     *
      * @return TextCollection
      * @throws AssertionFailedException
      */
     public static function wrap($array): TextCollection
     {
         Assertion::isArray($array, 'Input must be an array');
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                throw new InvalidArgumentException('Value at index ' . $key . ' must not be an array.', 400);
+            }
+        }
         return new self($array);
     }
 
@@ -345,5 +353,42 @@ class TextCollection implements Countable, JsonSerializable
             throw new MethodNotFoundException('No such method', TextCollection::class, $method);
         }
         return new self($result->toArray());
+    }
+
+    /**
+     * Replaces tokens in a template with an array of replacement data,
+     * returning a TextCollection object containing the merged data.
+     *
+     * @param  string $template
+     * @param  string[] $tokens
+     * @param  array[] $replaceData
+     * @param  string $leftDelimiter
+     * @param  string $rightDelimiter
+     * @return TextCollection
+     * @throws AssertionFailedException
+     */
+    public static function mailMerge(
+        string $template,
+        array $tokens,
+        array $replaceData,
+        string $leftDelimiter,
+        string $rightDelimiter
+    ): TextCollection {
+        $collection = TextCollection::empty();
+        foreach ($replaceData as $replacementRow) {
+            Assertion::eq(
+                count($tokens),
+                count($replacementRow),
+                'Replacement arrays must be same length as token array'
+            );
+            $count = count($tokens);
+            $text = Text::create($template);
+            for ($i = 0; $i < $count; $i ++) {
+                $textToReplace = $leftDelimiter . $tokens[$i] . $rightDelimiter;
+                $text = $text->replaceAll($textToReplace, $replacementRow[$i]);
+            }
+            $collection->add($text);
+        }
+        return $collection;
     }
 }

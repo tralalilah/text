@@ -532,36 +532,4 @@ final class Text implements JsonSerializable
         $array = explode($separator, $this->value);
         return TextCollection::wrap($array);
     }
-
-    /**
-     * @param  string[] $tokens
-     * @param  array[]  $replaceData
-     * @param  string   $leftDelimiter
-     * @param  string   $rightDelimiter
-     * @return TextCollection
-     * @throws AssertionFailedException
-     */
-    public function mailMerge(
-        array $tokens,
-        array $replaceData,
-        string $leftDelimiter,
-        string $rightDelimiter
-    ): TextCollection {
-        $collection = TextCollection::empty();
-        foreach ($replaceData as $replacementRow) {
-            Assertion::eq(
-                count($tokens),
-                count($replacementRow),
-                'Replacement arrays must be same length as token array'
-            );
-            $count = count($tokens);
-            $text = $this->clone();
-            for ($i = 0; $i < $count; $i ++) {
-                $textToReplace = $leftDelimiter . $tokens[$i] . $rightDelimiter;
-                $text = $text->replaceAll($textToReplace, $replacementRow[$i]);
-            }
-            $collection->add($text);
-        }
-        return $collection;
-    }
 }
