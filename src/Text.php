@@ -29,6 +29,10 @@ final class Text implements JsonSerializable
     private $value;
 
     /**
+     * Creation/rendering methods
+     */
+
+    /**
      * @param  mixed $value
      * @return static
      */
@@ -93,11 +97,75 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Property-like methods. Return scalars.
+     */
+
+    /**
      * @return int
      */
     public function length(): int
     {
         return strlen($this->value);
+    }
+
+    /**
+     * @param  string $string
+     * @return int
+     * @throws AssertionFailedException
+     */
+    public function positionOf(string $string): int
+    {
+        Assertion::contains($this->value, $string, 'Given string does not appear');
+        return (int)strpos($this->value, $string);
+    }
+
+    /**
+     * @param  string $string
+     * @return int
+     * @throws AssertionFailedException
+     */
+    public function lastPositionOf(string $string): int
+    {
+        Assertion::contains($this->value, $string, 'Given string does not appear');
+        return (int)strrpos($this->value, $string);
+    }
+
+    /**
+     * @param  int $position
+     * @return string
+     * @throws AssertionFailedException
+     */
+    public function characterAt(int $position): string
+    {
+        Assertion::greaterOrEqualThan($position, 0, 'Position cannot be negative');
+        Assertion::lessThan($position, $this->length(), 'Position must be less than string length');
+        return substr($this->value, $position, 1);
+    }
+
+    /**
+     * @param  string $string
+     * @return int
+     */
+    public function count(string $string): int
+    {
+        $escapeString = RegEx::escape($string);
+        $pattern = '/' . $escapeString . '/';
+        return (int)preg_match_all($pattern, $this->value);
+    }
+
+    /**
+     * Comparison methods. Return boolean values
+     */
+
+    /**
+     * Tests that one Text object has the same value as another
+     *
+     * @param  Text $compare
+     * @return bool
+     */
+    public function equals(Text $compare): bool
+    {
+        return $this->value === $compare->value;
     }
 
     /**
@@ -142,38 +210,8 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param  string $string
-     * @return int
-     * @throws AssertionFailedException
+     * Slicing and dicing methods. Return new Text objects.
      */
-    public function positionOf(string $string): int
-    {
-        Assertion::contains($this->value, $string, 'Given string does not appear');
-        return (int)strpos($this->value, $string);
-    }
-
-    /**
-     * @param  string $string
-     * @return int
-     * @throws AssertionFailedException
-     */
-    public function lastPositionOf(string $string): int
-    {
-        Assertion::contains($this->value, $string, 'Given string does not appear');
-        return (int)strrpos($this->value, $string);
-    }
-
-    /**
-     * @param  int $position
-     * @return string
-     * @throws AssertionFailedException
-     */
-    public function characterAt(int $position): string
-    {
-        Assertion::greaterOrEqualThan($position, 0, 'Position cannot be negative');
-        Assertion::lessThan($position, $this->length(), 'Position must be less than string length');
-        return substr($this->value, $position, 1);
-    }
 
     /**
      * @param  int $chars
@@ -201,17 +239,6 @@ final class Text implements JsonSerializable
             $chars = $this->length();
         }
         return new self(substr($this->value, -$chars));
-    }
-
-    /**
-     * @param  string $string
-     * @return int
-     */
-    public function count(string $string): int
-    {
-        $escapeString = RegEx::escape($string);
-        $pattern = '/' . $escapeString . '/';
-        return (int)preg_match_all($pattern, $this->value);
     }
 
     /**
@@ -314,6 +341,86 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * @param  string $textToReplace
+     * @param  string $replacement
+     * @return Text
+     * @throws AssertionFailedException
+     */
+    public function replaceOne(string $textToReplace, string $replacement): Text
+    {
+        $offset = $this->positionOf($textToReplace);
+        $length = strlen($textToReplace);
+        return new self(substr_replace($this->value, $replacement, $offset, $length));
+    }
+
+    /**
+     * @param  string $textToReplace
+     * @param  string $replacement
+     * @return Text
+     */
+    public function replaceAll(string $textToReplace, string $replacement): Text
+    {
+        return new self(str_replace($textToReplace, $replacement, $this->value));
+    }
+
+    /**
+     * @param  string $replacement
+     * @return Text
+     */
+    public function replaceSpecialCharacters(string $replacement = ''): Text
+    {
+        return new self(RegEx::replaceSpecialCharacters($this->value, $replacement));
+    }
+
+    /**
+     * @param  string $replacement
+     * @param  string $pattern
+     * @return Text
+     */
+    public function regexReplaceOne(string $replacement, string $pattern): Text
+    {
+        return new self(preg_replace($pattern, $replacement, $this->value, 1));
+    }
+
+    /**
+     * @param  string $replacement
+     * @param  string $pattern
+     * @return Text
+     */
+    public function regexReplaceAll(string $replacement, string $pattern): Text
+    {
+        return new self(preg_replace($pattern, $replacement, $this->value));
+    }
+
+    /**
+     * @param  string $toBeSwapped
+     * @param  string $swapWith
+     * @return Text
+     * @throws AssertionFailedException
+     */
+    public function swap(string $toBeSwapped, string $swapWith): Text
+    {
+        Assertion::contains($this->value, $toBeSwapped, '"to be swapped" value not found in string');
+        Assertion::contains($this->value, $swapWith, '"swap with" value not found in string');
+
+        $toBeSwappedPos = strpos($this->value, $toBeSwapped);
+        $swapPos = strpos($this->value, $swapWith);
+
+        if ($toBeSwappedPos < $swapPos) {
+            $left = $toBeSwapped;
+            $right = $swapWith;
+        } else {
+            $left = $swapWith;
+            $right = $toBeSwapped;
+        }
+        return new self(RegEx::swap($left, $right, $this->value));
+    }
+
+    /**
+     * Transformation methods. Return new Text objects.
+     */
+
+    /**
      * @return Text
      */
     public function uppercase(): Text
@@ -412,55 +519,18 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param  string $textToReplace
-     * @param  string $replacement
-     * @return Text
+     * Collection methods. Return TextCollection objects.
+     */
+
+    /**
+     * @param  string $separator
+     * @return TextCollection
      * @throws AssertionFailedException
      */
-    public function replaceOne(string $textToReplace, string $replacement): Text
+    public function split(string $separator): TextCollection
     {
-        $offset = $this->positionOf($textToReplace);
-        $length = strlen($textToReplace);
-        return new self(substr_replace($this->value, $replacement, $offset, $length));
-    }
-
-    /**
-     * @param  string $textToReplace
-     * @param  string $replacement
-     * @return Text
-     */
-    public function replaceAll(string $textToReplace, string $replacement): Text
-    {
-        return new self(str_replace($textToReplace, $replacement, $this->value));
-    }
-
-    /**
-     * @param  string $replacement
-     * @return Text
-     */
-    public function replaceSpecialCharacters(string $replacement = ''): Text
-    {
-        return new self(RegEx::replaceSpecialCharacters($this->value, $replacement));
-    }
-
-    /**
-     * @param  string $replacement
-     * @param  string $pattern
-     * @return Text
-     */
-    public function regexReplaceOne(string $replacement, string $pattern): Text
-    {
-        return new self(preg_replace($pattern, $replacement, $this->value, 1));
-    }
-
-    /**
-     * @param  string $replacement
-     * @param  string $pattern
-     * @return Text
-     */
-    public function regexReplaceAll(string $replacement, string $pattern): Text
-    {
-        return new self(preg_replace($pattern, $replacement, $this->value));
+        $array = explode($separator, $this->value);
+        return TextCollection::wrap($array);
     }
 
     /**
@@ -493,40 +563,5 @@ final class Text implements JsonSerializable
             $collection->add($text);
         }
         return $collection;
-    }
-
-    /**
-     * @param  string $toBeSwapped
-     * @param  string $swapWith
-     * @return Text
-     * @throws AssertionFailedException
-     */
-    public function swap(string $toBeSwapped, string $swapWith): Text
-    {
-        Assertion::contains($this->value, $toBeSwapped, '"to be swapped" value not found in string');
-        Assertion::contains($this->value, $swapWith, '"swap with" value not found in string');
-
-        $toBeSwappedPos = strpos($this->value, $toBeSwapped);
-        $swapPos = strpos($this->value, $swapWith);
-
-        if ($toBeSwappedPos < $swapPos) {
-            $left = $toBeSwapped;
-            $right = $swapWith;
-        } else {
-            $left = $swapWith;
-            $right = $toBeSwapped;
-        }
-        return new self(RegEx::swap($left, $right, $this->value));
-    }
-
-    /**
-     * @param  string $separator
-     * @return TextCollection
-     * @throws AssertionFailedException
-     */
-    public function split(string $separator): TextCollection
-    {
-        $array = explode($separator, $this->value);
-        return TextCollection::wrap($array);
     }
 }

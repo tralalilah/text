@@ -74,6 +74,25 @@ class TextTest extends TestCase
         self::assertEquals(self::UPPER_CASE, $str2->toString());
     }
 
+    public function testEquals(): void
+    {
+        $text1 = Text::create('1');
+        $text1a = Text::create('1');
+        $text2 = Text::create('2');
+
+        self::assertTrue($text1->equals($text1a));
+        self::assertFalse($text1->equals($text2));
+    }
+
+    public function testClone(): void
+    {
+        $text1 = Text::create('clone');
+        $text2 = $text1->clone();
+
+        self::assertTrue($text1->equals($text2));
+        self::assertFalse($text1 === $text2);
+    }
+
     public function testContains(): void
     {
         $text = Text::create(self::STRING);
