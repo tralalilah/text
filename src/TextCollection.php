@@ -14,6 +14,10 @@ use Tightenco\Collect\Support\Collection;
  *
  * @package TraLaLilah\Text
  *
+ * @method TextCollection first(int $chars) Returns the first $chars characters of each element
+ * @method TextCollection last(int $chars) Returns the first $chars characters of each element
+ * @method TextCollection leftPad(int $length, string $padding = ' ') pads each element to given length
+ * @method TextCollection rightPad(int $length, string $padding = ' ') pads each element to given length
  * @method TextCollection uppercase() Converts all strings to uppercase
  * @method TextCollection lowercase() Converts all strings to lowercase
  * @method TextCollection snakeCase() Converts all strings to snake_case
@@ -28,7 +32,7 @@ use Tightenco\Collect\Support\Collection;
  */
 class TextCollection implements Countable, JsonSerializable
 {
-    private const AVAILABLE_METHODS = [
+    private const AVAILABLE_PASS_THROUGH_METHODS = [
         'uppercase',
         'lowercase',
         'slug',
@@ -38,7 +42,11 @@ class TextCollection implements Countable, JsonSerializable
         'replaceSpecialCharacters',
         'trim',
         'replaceAll',
-        'regexReplaceAll'
+        'regexReplaceAll',
+        'leftPad',
+        'rightPad',
+        'first',
+        'last'
     ];
 
     /**
@@ -275,17 +283,6 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Removes duplicate elements of the collection
-     *
-     * @return TextCollection
-     * @throws AssertionFailedException
-     */
-    public function unique(): TextCollection
-    {
-        return TextCollection::wrap(array_unique($this->toArray()));
-    }
-
-    /**
      * Adjusts the length of each Text to be the length of the longest, by padding right
      *
      * @return TextCollection
@@ -316,6 +313,17 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
+     * Removes duplicate elements of the collection
+     *
+     * @return TextCollection
+     * @throws AssertionFailedException
+     */
+    public function unique(): TextCollection
+    {
+        return TextCollection::wrap(array_unique($this->toArray()));
+    }
+
+    /**
      * @param  string   $method
      * @param  string[] $args
      * @return TextCollection
@@ -323,14 +331,14 @@ class TextCollection implements Countable, JsonSerializable
     public function __call(string $method, array $args): TextCollection
     {
         $result = null;
-        if (in_array($method, self::AVAILABLE_METHODS)) {
+        if (in_array($method, self::AVAILABLE_PASS_THROUGH_METHODS)) {
             $result = $this->collection->map(
                 function ($item) use ($method, $args) {
                     /**
                 * @var callable $callback
                 */
                     $callback = [$item, $method];
-                    return call_user_func($callback, $args);
+                    return call_user_func_array($callback, $args);
                 }
             );
         } else {

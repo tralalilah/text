@@ -250,6 +250,26 @@ class TextCollectionTest extends TestCase
     /**
      * @throws AssertionFailedException
      */
+    public function testRightPad(): void
+    {
+        $input = [
+            '1',
+            '22',
+            '55555'
+        ];
+
+        $expected = [
+            '1    ',
+            '22   ',
+            '55555'
+        ];
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($expected, $collection->rightPad(5)->toArray());
+    }
+
+    /**
+     * @throws AssertionFailedException
+     */
     public function testLeftJustify(): void
     {
         $input = [
@@ -265,6 +285,26 @@ class TextCollectionTest extends TestCase
         ];
         $collection = TextCollection::wrap($input);
         self::assertEquals($expected, $collection->leftJustify()->toArray());
+    }
+
+    /**
+     * @throws AssertionFailedException
+     */
+    public function testLeftPad(): void
+    {
+        $input = [
+            '1',
+            '22',
+            '55555'
+        ];
+
+        $expected = [
+            '    1',
+            '   22',
+            '55555'
+        ];
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($expected, $collection->leftPad(5)->toArray());
     }
 
     /**
@@ -325,6 +365,48 @@ class TextCollectionTest extends TestCase
         $collection = TextCollection::wrap($input);
         $this->expectException(MethodNotFoundException::class);
         $collection->missingMethod();
+    }
+
+    /**
+     * @throws AssertionFailedException
+     */
+    public function testFirst(): void
+    {
+        $input = [
+            'abcde',
+            'fghij',
+            'klmno'
+        ];
+
+        $expected = [
+            'abc',
+            'fgh',
+            'klm'
+        ];
+
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($expected, $collection->first(3)->toArray());
+    }
+
+    /**
+     * @throws AssertionFailedException
+     */
+    public function testLast(): void
+    {
+        $input = [
+            'abcde',
+            'fghij',
+            'klmno'
+        ];
+
+        $expected = [
+            'cde',
+            'hij',
+            'mno'
+        ];
+
+        $collection = TextCollection::wrap($input);
+        self::assertEquals($expected, $collection->last(3)->toArray());
     }
 
     /**
