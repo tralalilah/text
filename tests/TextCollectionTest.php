@@ -144,6 +144,33 @@ class TextCollectionTest extends TestCase
         self::assertFalse($collection->allElementsContain('bar'));
     }
 
+    public function testAnyElementMatchesRegex(): void
+    {
+        $array = [
+            'bar',
+            'baz',
+            'bash'
+        ];
+
+        $collection = TextCollection::wrap($array);
+        self::assertTrue($collection->anyElementMatchesRegex('/sh/'));
+        self::assertFalse($collection->anyElementMatchesRegex('/bat/'));
+    }
+
+    public function testAllElementsMatchRegex(): void
+    {
+        $array = [
+            'bar',
+            'baz',
+            'bash'
+        ];
+
+        $collection = TextCollection::wrap($array);
+        self::assertTrue($collection->allElementsMatchRegex('/ba/'));
+        self::assertFalse($collection->allElementsMatchRegex('/bar/'));
+        self::assertFalse($collection->allElementsMatchRegex('/bat/'));
+    }
+
     /**
      * @throws AssertionFailedException
      */

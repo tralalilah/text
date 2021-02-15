@@ -117,7 +117,7 @@ final class Text implements JsonSerializable
      * @param  string $pattern
      * @return bool
      */
-    public function containsRegex(string $pattern): bool
+    public function matchesRegex(string $pattern): bool
     {
         try {
             $result = preg_match($pattern, $this->value);
@@ -129,6 +129,16 @@ final class Text implements JsonSerializable
         } catch (Throwable $e) {
             throw new InvalidArgumentException($e->getMessage(), 400);
         }
+    }
+
+    public function startsWith(string $test): bool
+    {
+        return strpos($this->value, $test) === 0;
+    }
+
+    public function endsWith(string $test): bool
+    {
+        return strpos($this->value, $test, $this->length() - strlen($test)) !== false;
     }
 
     /**
@@ -150,7 +160,7 @@ final class Text implements JsonSerializable
     public function lastPositionOf(string $string): int
     {
         Assertion::contains($this->value, $string, 'Given string does not appear');
-        return (int)$this->length() - strlen($string) - strpos(strrev($this->value), strrev($string));
+        return strrpos($this->value, $string);
     }
 
     /**
@@ -160,10 +170,10 @@ final class Text implements JsonSerializable
      */
     public function characterAt(int $position): string
     {
+        Assertion::greaterOrEqualThan($position, 0, 'Position cannot be negative');
         Assertion::lessThan($position, $this->length(), 'Position must be less than string length');
         return substr($this->value, $position, 1);
     }
-
 
     /**
      * @param  int $chars
@@ -486,8 +496,8 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $toBeSwapped
-     * @param string $swapWith
+     * @param  string $toBeSwapped
+     * @param  string $swapWith
      * @return Text
      * @throws AssertionFailedException
      */
@@ -510,7 +520,7 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * @param string $separator
+     * @param  string $separator
      * @return TextCollection
      * @throws AssertionFailedException
      */

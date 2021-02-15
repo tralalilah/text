@@ -169,32 +169,67 @@ class TextCollection implements Countable, JsonSerializable
     /**
      * Returns true if any of the strings contains the value passed as $value
      *
-     * @param  string $value
+     * @param  string $test
      * @return bool
      */
-    public function anyElementContains(string $value): bool
+    public function anyElementContains(string $test): bool
     {
         return count(
-            $this->filter(
-                function ($item) use ($value) {
-                    return $item->contains($value);
+            $this->collection->filter(
+                function ($item) use ($test) {
+                    return $item->contains($test);
                 }
             )
         ) > 0;
     }
 
     /**
-     * Returns true if all of the strings contain the value passed as $value
+     * Returns true if all elements contain the value passed as $value
      *
-     * @param  string $value
+     * @param  string $test
      * @return bool
      */
-    public function allElementsContain(string $value): bool
+    public function allElementsContain(string $test): bool
     {
         return count(
-            $this->filter(
-                function ($item) use ($value) {
-                    return $item->contains($value);
+            $this->collection->filter(
+                function ($item) use ($test) {
+                    return $item->contains($test);
+                }
+            )
+        ) === count($this);
+    }
+
+    /**
+     * Returns true if at least one element matches the supplied patterns
+     * and false otherwise.
+     *
+     * @param string $pattern
+     * @return bool
+     */
+    public function anyElementMatchesRegex(string $pattern): bool
+    {
+        return count(
+            $this->collection->filter(
+                function (Text $item) use ($pattern) {
+                    return $item->matchesRegex($pattern);
+                }
+            )
+        ) > 0;
+    }
+
+    /**
+     * Returns true if all elements match the supplied pattern, and false otherwise.
+     *
+     * @param  string $pattern
+     * @return bool
+     */
+    public function allElementsMatchRegex(string $pattern): bool
+    {
+        return count(
+            $this->collection->filter(
+                function (Text $item) use ($pattern) {
+                    return $item->matchesRegex($pattern);
                 }
             )
         ) === count($this);

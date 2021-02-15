@@ -69,6 +69,7 @@ class TextTest extends TestCase
     {
         $text = Text::create(self::STRING);
         $str2 = $text->uppercase();
+
         self::assertEquals(self::STRING, $text->toString());
         self::assertEquals(self::UPPER_CASE, $str2->toString());
     }
@@ -76,22 +77,58 @@ class TextTest extends TestCase
     public function testContains(): void
     {
         $text = Text::create(self::STRING);
+
         self::assertTrue($text->contains(self::CONTAINS_CASE_SENSE));
         self::assertFalse($text->contains(self::DOES_NOT_CONTAIN_CASE_SENSE));
         self::assertTrue($text->contains(self::CONTAINS_CASE_INSENSITIVE, false));
         self::assertFalse($text->contains(self::DOES_NOT_CONTAIN_CASE_INSENSITIVE, false));
     }
 
-    public function testContainsRegex(): void
+    public function testMatchesRegex(): void
     {
         $start = 'A bird is an animal.';
         $containsPattern = '/bird/';
         $doesNotContainPattern = '/tree/';
         $text = Text::create($start);
-        self::assertTrue($text->containsRegex($containsPattern));
-        self::assertFalse($text->containsRegex($doesNotContainPattern));
+
+        self::assertTrue($text->matchesRegex($containsPattern));
+        self::assertFalse($text->matchesRegex($doesNotContainPattern));
         $this->expectException(InvalidArgumentException::class);
-        $text->containsRegex('/broken');
+        $text->matchesRegex('/broken');
+    }
+
+    public function testStartsWith(): void
+    {
+        $inputTrue = 'Start with some text';
+        $inputFalse = 'Does not Start with';
+        $inputAbsent = 'Does not';
+        $test = 'Start with';
+
+        $text = Text::create($inputTrue);
+        self::assertTrue($text->startsWith($test));
+
+        $text = Text::create($inputFalse);
+        self::assertFalse($text->startsWith($test));
+
+        $text = Text::create($inputAbsent);
+        self::assertFalse($text->startsWith($test));
+    }
+
+    public function testEndsWith(): void
+    {
+        $inputTrue = 'This is what it ends with';
+        $inputFalse = 'This is what it ends with?';
+        $inputAbsent = 'This is what';
+        $test = 'ends with';
+
+        $text = Text::create($inputTrue);
+        self::assertTrue($text->endsWith($test));
+
+        $text = Text::create($inputFalse);
+        self::assertFalse($text->endsWith($test));
+
+        $text = Text::create($inputAbsent);
+        self::assertFalse($text->endsWith($test));
     }
 
     public function testLength(): void
@@ -139,6 +176,7 @@ class TextTest extends TestCase
     {
         $string = 'ABCDE';
         $charAt4 = 'E';
+
         $text = Text::create($string);
         self::assertEquals($charAt4, $text->characterAt(4));
     }
