@@ -472,12 +472,12 @@ class TextTest extends TestCase
         self::assertEquals($snake, $text->snakeCase()->toString());
     }
 
-    public function testTitleCase(): void
+    public function testPascalCase(): void
     {
         $input = 'This is a string';
-        $title = 'This Is A String';
+        $title = 'ThisIsAString';
         $text = Text::create($input);
-        self::assertEquals($title, $text->titleCase()->toString());
+        self::assertEquals($title, $text->pascalCase()->toString());
     }
 
     public function testSlug(): void

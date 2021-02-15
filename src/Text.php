@@ -11,9 +11,9 @@ use TraLaLilah\Text\Lib\RegEx;
 use Throwable;
 
 /**
- * Primary class for doing string manipulation.
+ * Class TraLiLilah\Text
  *
- * A useful class for developers, to assist with strings.
+ * A useful class for developers, to assist with string manipulation.
  *
  * @category Strings
  * @package  TraLaLilah\Text
@@ -24,6 +24,8 @@ use Throwable;
 final class Text implements JsonSerializable
 {
     /**
+     * private property containing the underlying string value of the Text object.
+     *
      * @var string
      */
     private $value;
@@ -33,6 +35,9 @@ final class Text implements JsonSerializable
      */
 
     /**
+     * Primary method for creating Text objects; returns a Text object, given
+     * just about anything capable of being cast as a string.
+     *
      * @param  mixed $value
      * @return static
      */
@@ -81,6 +86,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Required to implement JsonSerialize interface.
+     *
      * @return mixed|string
      */
     public function jsonSerialize()
@@ -89,6 +96,7 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Renders thee Text object to its underlying string value.
      * @return string
      */
     public function toString(): string
@@ -101,6 +109,7 @@ final class Text implements JsonSerializable
      */
 
     /**
+     * Returns the length of the underlying string.
      * @return int
      */
     public function length(): int
@@ -109,6 +118,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the position of the first instance of $string in the Text object.
+     *
      * @param  string $string
      * @return int
      * @throws AssertionFailedException
@@ -120,6 +131,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the position of the last instance of $string in the Text object.
+     *
      * @param  string $string
      * @return int
      * @throws AssertionFailedException
@@ -131,6 +144,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the character at the given position in the underlying string.
+     *
      * @param  int $position
      * @return string
      * @throws AssertionFailedException
@@ -143,6 +158,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the number of times the given string is found in the Text object.
+     *
      * @param  string $string
      * @return int
      */
@@ -158,7 +175,7 @@ final class Text implements JsonSerializable
      */
 
     /**
-     * Tests that one Text object has the same value as another
+     * Tests that one Text object has the same underlying value as another
      *
      * @param  Text $compare
      * @return bool
@@ -169,6 +186,7 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Tests that the provided string exists somewhere in the Text object.
      * @param  string $string
      * @param  bool   $caseSensitive
      * @return bool
@@ -182,6 +200,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Tests that the provided regex patterns matches the Text object at least once.
+     *
      * @param  string $pattern
      * @return bool
      */
@@ -199,11 +219,24 @@ final class Text implements JsonSerializable
         }
     }
 
+
+    /**
+     * Tests that the Text object begins with the provided string
+     *
+     * @param  string $test
+     * @return bool
+     */
     public function startsWith(string $test): bool
     {
         return strpos($this->value, $test) === 0;
     }
 
+    /**
+     * Tests that the Text object ends with the provided string
+     *
+     * @param  string $test
+     * @return bool
+     */
     public function endsWith(string $test): bool
     {
         return strpos($this->value, $test, $this->length() - strlen($test)) !== false;
@@ -214,6 +247,8 @@ final class Text implements JsonSerializable
      */
 
     /**
+     * Returns the first $chars number of characters in the Text object, as a new object.
+     *
      * @param  int $chars
      * @return Text
      * @throws AssertionFailedException
@@ -228,6 +263,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the last $chars number of characters in the Text object, as a new object.
+     *
      * @param  int $chars
      * @return Text
      * @throws AssertionFailedException
@@ -242,6 +279,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the portion of the Text object to be found before the provided string, as
+     * a new Text object.
+     *
      * @param  string $string
      * @return Text
      * @throws AssertionFailedException
@@ -253,6 +293,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the portion of the Text object to be found after the provided string, as
+     * a new Text object.
+     *
      * @param  string $string
      * @return Text
      * @throws AssertionFailedException
@@ -264,6 +307,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns all but the first $chars characters of the Text object, as a new Text object.
+     *
      * @param  int $chars
      * @return Text
      * @throws AssertionFailedException
@@ -275,6 +320,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns all but the last $chars characters of the Text object, as a new Text object.
+     *
      * @param  int $chars
      * @return Text
      * @throws AssertionFailedException
@@ -286,6 +333,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Returns the text found between the given $left and $right delimiters,
+     * as a new Text object.
+     *
      * @param  string $left
      * @param  string $right
      * @param  int    $offset
@@ -310,7 +360,9 @@ final class Text implements JsonSerializable
     }
 
     /**
-     * Return every string found between the two tokens. Does not support nesting delimiters.
+     * Return every string found between the two tokens, a TextCollection object.
+     * Does not support nesting delimiters--these will throw an InvalidArgument
+     * exception.
      *
      * @param  string $left
      * @param  string $right
@@ -341,6 +393,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Replaces the first instance of $textToReplace with $replacement, and returns a
+     * new Text object.
+     *
      * @param  string $textToReplace
      * @param  string $replacement
      * @return Text
@@ -354,6 +409,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Replaces the all instances of $textToReplace with $replacement, and returns a
+     * new Text object.
+     *
      * @param  string $textToReplace
      * @param  string $replacement
      * @return Text
@@ -364,6 +422,10 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Replaces all special characters with the provided replacement (defaulting to
+     * empty string), and returns a new Text object.
+     * new Text object.
+     *
      * @param  string $replacement
      * @return Text
      */
@@ -373,6 +435,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Replaces the first match of the provided $pattern with $replacement, and returns a
+     * new Text object.
+     *
      * @param  string $replacement
      * @param  string $pattern
      * @return Text
@@ -383,6 +448,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Replaces all matches of the provided $pattern with $replacement, and returns a
+     * new Text object.
+     *
      * @param  string $replacement
      * @param  string $pattern
      * @return Text
@@ -393,6 +461,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Swaps the positions of $toBeSwapped and $swapWith in the object, and returns a new
+     * Text object. Throws an exception if either string cannot be found in the object.
      * @param  string $toBeSwapped
      * @param  string $swapWith
      * @return Text
@@ -421,6 +491,8 @@ final class Text implements JsonSerializable
      */
 
     /**
+     * Transforms the string to UPPERCASE and returns a new Text object.
+     *
      * @return Text
      */
     public function uppercase(): Text
@@ -429,6 +501,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Transforms the string to lowercase and returns a new Text object.
+     *
      * @return Text
      */
     public function lowercase(): Text
@@ -437,6 +511,9 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Puts the first character of the string in lowercase and returns a new Text
+     * object.
+     *
      * @return Text
      * @throws AssertionFailedException
      */
@@ -453,6 +530,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Transforms the string to have Uppercase Words and returns a new Text object.
+     *
      * @return Text
      */
     public function uppercaseWords(): Text
@@ -461,6 +540,7 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Transforms the string to camelCase
      * @return Text
      * @throws AssertionFailedException
      */
@@ -474,6 +554,8 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Transforms the string to snake_case and returns a new Text object.
+     *
      * @return Text
      */
     public function snakeCase(): Text
@@ -493,14 +575,20 @@ final class Text implements JsonSerializable
     }
 
     /**
+     * Transforms the string to PascalCase and returns a new object
+     *
      * @return Text
      */
-    public function titleCase(): Text
+    public function pascalCase(): Text
     {
-        return $this->uppercaseWords();
+        return $this
+            ->uppercaseWords()
+            ->replaceAll(' ', '');
     }
 
     /**
+     * Trims whitespace from both sides of the string and returns a new Text object.
+     *
      * @return Text
      */
     public function trim(): Text
@@ -508,11 +596,27 @@ final class Text implements JsonSerializable
         return new self(trim($this->value));
     }
 
+    /**
+     * Pads the string on the left to the given $length with the provided $padding
+     * and returns a new Text object.
+     *
+     * @param  int $length
+     * @param  string $padding
+     * @return Text
+     */
     public function leftPad(int $length, string $padding = ' '): Text
     {
         return new self(str_pad($this->value, $length, $padding, STR_PAD_LEFT));
     }
 
+    /**
+     * Pads the string on the right to the given $length with the provided $padding
+     * and returns a new Text object.
+     *
+     * @param  int $length
+     * @param  string $padding
+     * @return Text
+     */
     public function rightPad(int $length, string $padding = ' '): Text
     {
         return new self(str_pad($this->value, $length, $padding, STR_PAD_RIGHT));
@@ -523,6 +627,9 @@ final class Text implements JsonSerializable
      */
 
     /**
+     * Splits the string on the given $separator and returns the results as a
+     * TextCollection object.
+     *
      * @param  string $separator
      * @return TextCollection
      * @throws AssertionFailedException

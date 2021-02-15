@@ -11,25 +11,31 @@ use Prophecy\Exception\Doubler\MethodNotFoundException;
 use Tightenco\Collect\Support\Collection;
 
 /**
- * Class TextCollection
+ * Class TraLiLilah\TextCollection
  *
- * @package TraLaLilah\Text
+ * A useful class for developers, to assist with string manipulation.
+ *
+ * @category Strings
+ * @package  TraLaLilah\Text
+ * @author   Lilah Sturges <lilah.sturges@gmail.com>
+ * @license  MIT https://opensource.org/licenses/MIT
+ * @link     https://github.com/tralalilah/text
  *
  * @method TextCollection first(int $chars) Returns the first $chars characters of each element
  * @method TextCollection last(int $chars) Returns the first $chars characters of each element
  * @method TextCollection leftPad(int $length, string $padding = ' ') pads each element to given length
  * @method TextCollection rightPad(int $length, string $padding = ' ') pads each element to given length
- * @method TextCollection uppercase() Converts all strings to uppercase
- * @method TextCollection lowercase() Converts all strings to lowercase
- * @method TextCollection snakeCase() Converts all strings to snake_case
- * @method TextCollection camelCase() Converts all strings to camelCase
- * @method TextCollection titleCase() Converts all strings to Title Case
- * @method TextCollection slug() Converts all strings to slugs
+ * @method TextCollection uppercase() Converts all elements to uppercase
+ * @method TextCollection lowercase() Converts all elements to lowercase
+ * @method TextCollection snakeCase() Converts all elements to snake_case
+ * @method TextCollection camelCase() Converts all elements to camelCase
+ * @method TextCollection titleCase() Converts all elements to Title Case
+ * @method TextCollection slug() Converts all elements to slugs
  * @method TextCollection replaceSpecialCharacters(string $replacement) Replace special characters
- * @method TextCollection trim() Trims all strings
- * @method TextCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each string
- * @method TextCollection regexReplaceAll(string $replacement, string $pattern) Replaces all matches in each string
- * @method missingMethod() Does not exist. For testing purposes only.
+ * @method TextCollection trim() Trims all elements
+ * @method TextCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each elements
+ * @method TextCollection regexReplaceAll(string $replacement, string $pattern) Replaces all matches in each elements
+ * @method TextCollection missingMethod() Does not exist -- for testing purposes only
  */
 class TextCollection implements Countable, JsonSerializable
 {
@@ -56,7 +62,8 @@ class TextCollection implements Countable, JsonSerializable
     private $collection;
 
     /**
-     * Returns a new instance of TextCollection.
+     * Returns a new instance of TextCollection containing Text objects
+     * created from the array passed in.
      *
      * @param  mixed $array Contents can be of mixed types EXCEPT nested arrays.
      * Associative arrays will lose string keys.
@@ -76,6 +83,8 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
+     * Returns an empty instance of TextCollection
+     *
      * @return TextCollection
      */
     public static function empty(): TextCollection
@@ -84,7 +93,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * TextCollection constructor.
+     * TextCollection constructor. Private.
      *
      * @param mixed[] $inputs
      */
@@ -97,13 +106,18 @@ class TextCollection implements Countable, JsonSerializable
         $this->collection = Collection::wrap($objects);
     }
 
+    /**
+     * Adds a Text element to the collection
+     *
+     * @param Text $text
+     */
     public function add(Text $text): void
     {
         $this->collection->add($text);
     }
 
     /**
-     * Implements Countable interface
+     * Necessary to implement the Countable interface
      *
      * @return int
      */
@@ -113,7 +127,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Implements JsonSerialize interface
+     * Necessary to implement the JsonSerialize interface
      *
      * @return array[]
      */
@@ -123,7 +137,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Outputs the content of the collection as an array of strings
+     * Outputs the content of the collection as an array of scalar strings
      *
      * @return array[]
      */
@@ -133,7 +147,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Returns an array containing the length of each string
+     * Returns an array of integers specifying the length of each element
      *
      * @return int[]
      */
@@ -148,7 +162,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Returns the length of the longest string in the collection
+     * Returns the length of the longest element in the collection
      *
      * @return int
      */
@@ -166,24 +180,24 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Returns true if any of the strings equals the value passed as $value
+     * Returns true if any of the elements equals the value passed as $test
      *
-     * @param  string $value
+     * @param  string $test
      * @return bool
      */
-    public function anyElementEquals(string $value): bool
+    public function anyElementEquals(string $test): bool
     {
         return count(
             $this->filter(
-                function ($item) use ($value) {
-                    return $item->toString() === $value;
+                function ($item) use ($test) {
+                    return $item->toString() === $test;
                 }
             )->toArray()
         ) > 0;
     }
 
     /**
-     * Returns true if any of the strings contains the value passed as $value
+     * Returns true if any of the strings contains the value passed as $test
      *
      * @param  string $test
      * @return bool
@@ -200,7 +214,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Returns true if all elements contain the value passed as $value
+     * Returns true if all elements contain the value passed as $test
      *
      * @param  string $test
      * @return bool
@@ -274,7 +288,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Sorts the collection alphabetically
+     * Returns a new TextCollection containing the elements sorted alphabetically.
      *
      * @return TextCollection
      */
@@ -291,7 +305,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Adjusts the length of each Text to be the length of the longest, by padding right
+     * Adjusts the length of each Text to be the length of the longest, by padding right.
      *
      * @return TextCollection
      */
@@ -306,7 +320,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Adjusts the length of each Text to be the length of the longest, by padding left
+     * Adjusts the length of each Text to be the length of the longest, by padding left.
      *
      * @return TextCollection
      */
@@ -321,7 +335,7 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
-     * Removes duplicate elements of the collection
+     * Removes duplicate elements of the collection.
      *
      * @return TextCollection
      * @throws AssertionFailedException
@@ -332,6 +346,8 @@ class TextCollection implements Countable, JsonSerializable
     }
 
     /**
+     * Used to create pass-through method calls to Text
+     *
      * @param  string   $method
      * @param  string[] $args
      * @return TextCollection

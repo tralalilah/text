@@ -383,8 +383,11 @@ class TextCollectionTest extends TestCase
 
         $collection = TextCollection::wrap($input);
         self::assertEquals($allSlugs, $collection->slug()->toArray());
+    }
 
-        $collection = TextCollection::wrap($input);
+    public function testNoSuchMagicMethod(): void
+    {
+        $collection = TextCollection::wrap(self::BASIC_ARRAY);
         $this->expectException(MethodNotFoundException::class);
         $collection->missingMethod();
     }

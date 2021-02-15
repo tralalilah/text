@@ -6,9 +6,22 @@ use Assert\Assert;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
 
+/**
+ * Class RegEx
+ *
+ * Set of regex functions, to keep regexes out of Text.php.
+ *
+ * @category Strings
+ * @package  TraLaLilah\Text\Lib
+ * @author   Lilah Sturges <lilah.sturges@gmail.com>
+ * @license  MIT https://opensource.org/licenses/MIT
+ * @link     https://github.com/tralalilah/text
+ **/
 class RegEx
 {
     /**
+     * Escapes characters in a string that would break a regex pattern.
+     *
      * @param  string $subject
      * @return string
      */
@@ -18,6 +31,8 @@ class RegEx
     }
 
     /**
+     * Uses regex to swap two matched strings in another string.
+     *
      * @param  string $left
      * @param  string $right
      * @param  string $subject
@@ -36,6 +51,8 @@ class RegEx
     }
 
     /**
+     * Uses regex to find a string between two other strings
+     *
      * @param  string $left
      * @param  string $right
      * @param  string $subject
@@ -60,6 +77,8 @@ class RegEx
     }
 
     /**
+     * Uses regex to replace special character that cannot be used in slugs, variable names, etc.
+     *
      * @param  string $subject
      * @param  string $replacement
      * @return string
