@@ -4,15 +4,22 @@ namespace TraLaLilah\Text;
 
 use Assert\Assert;
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException;
 use JsonSerializable;
 use TraLaLilah\Text\Lib\RegEx;
 use Throwable;
 
 /**
- * Class Text
+ * Primary class for doing string manipulation.
  *
- * @package TraLaLilah\Text
+ * A useful class for developers, to assist with strings.
+ *
+ * @category Strings
+ * @package  TraLaLilah\Text
+ * @author   Lilah Sturges <lilah.sturges@gmail.com>
+ * @license  MIT https://opensource.org/licenses/MIT
+ * @link     https://github.com/tralalilah/text
  **/
 final class Text implements JsonSerializable
 {
@@ -27,17 +34,23 @@ final class Text implements JsonSerializable
      */
     public static function create($value): self
     {
-        if(is_object($value)) {
-            if(method_exists($value, 'toString')) {
+        if (is_object($value)) {
+            if (method_exists($value, 'toString')) {
                 $value = $value->toString();
             } elseif (method_exists($value, '__toString')) {
                 $value = $value->__toString();
             } else {
-                throw new InvalidArgumentException('Input objects must hav a "toString()"  or "__toString()" method', 400);
+                throw new InvalidArgumentException(
+                    'Input objects must hav a "toString()"  or "__toString()" method',
+                    400
+                );
             }
         }
-        if($value === true || $value === false) {
-            throw new InvalidArgumentException('true and false are not acceptable input', 400);
+        if ($value === true || $value === false) {
+            throw new InvalidArgumentException(
+                'true and false are not acceptable input',
+                400
+            );
         }
         return new static((string)$value);
     }
@@ -45,7 +58,7 @@ final class Text implements JsonSerializable
     /**
      * Text constructor.
      *
-     * @param string|null $value
+     * @param  string|null $value
      */
     private function __construct(?string $value)
     {
@@ -121,7 +134,7 @@ final class Text implements JsonSerializable
     /**
      * @param  string $string
      * @return int
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function positionOf(string $string): int
     {
@@ -132,7 +145,7 @@ final class Text implements JsonSerializable
     /**
      * @param  string $string
      * @return int
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function lastPositionOf(string $string): int
     {
@@ -143,7 +156,7 @@ final class Text implements JsonSerializable
     /**
      * @param  int $position
      * @return string
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function characterAt(int $position): string
     {
@@ -155,7 +168,7 @@ final class Text implements JsonSerializable
     /**
      * @param  int $chars
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function first(int $chars): Text
     {
@@ -169,7 +182,7 @@ final class Text implements JsonSerializable
     /**
      * @param  int $chars
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function last(int $chars): Text
     {
@@ -194,7 +207,7 @@ final class Text implements JsonSerializable
     /**
      * @param  string $string
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function before(string $string): Text
     {
@@ -205,7 +218,7 @@ final class Text implements JsonSerializable
     /**
      * @param  string $string
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function after(string $string): Text
     {
@@ -216,7 +229,7 @@ final class Text implements JsonSerializable
     /**
      * @param  int $chars
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function allButTheFirst(int $chars): Text
     {
@@ -227,7 +240,7 @@ final class Text implements JsonSerializable
     /**
      * @param  int $chars
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function allButTheLast(int $chars): Text
     {
@@ -240,7 +253,7 @@ final class Text implements JsonSerializable
      * @param  string $right
      * @param  int    $offset
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function between(string $left, string $right, int $offset = 0): Text
     {
@@ -251,7 +264,10 @@ final class Text implements JsonSerializable
         }
         Assertion::contains($this->value, $left, '"left" delimiter must exist in text');
         Assertion::contains($this->value, $right, '"right" delimiter must exist in text');
-        Assert::that($this->positionOf($left) < $this->positionOf($right), 'Left delimiter must occur before right delimiter in text');
+        Assert::that(
+            $this->positionOf($left) < $this->positionOf($right),
+            'Left delimiter must occur before right delimiter in text'
+        );
 
         return Text::create(RegEx::between($left, $right, $value));
     }
@@ -262,21 +278,22 @@ final class Text implements JsonSerializable
      * @param  string $left
      * @param  string $right
      * @return TextCollection
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function betweenMany(string $left, string $right): TextCollection
     {
         $arr = [];
         $offset = 0;
         $lastPositionOfRight = $this->lastPositionOf($right);
-        while ($offset < $lastPositionOfRight){
+        while ($offset < $lastPositionOfRight) {
             $between = $this->between($left, $right, $offset);
-            if(strpos($between->toString(), $left) !== false) {
+            if (strpos($between->toString(), $left) !== false) {
                 throw new InvalidArgumentException('Nested delimiters not supported', 400);
             }
 
             $arr[] = $between;
-            $offset = $this->positionOf($left . $between->toString() . $right) + $between->length() + strlen($right) + 1;
+            $offset = $this->positionOf($left . $between->toString() . $right) +
+                $between->length() + strlen($right) + 1;
         }
         return TextCollection::wrap($arr);
     }
@@ -302,6 +319,10 @@ final class Text implements JsonSerializable
         return new self(strtolower($this->value));
     }
 
+    /**
+     * @return Text
+     * @throws AssertionFailedException
+     */
     public function lowercaseFirst(): Text
     {
         return $this
@@ -324,7 +345,7 @@ final class Text implements JsonSerializable
 
     /**
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function camelCase(): Text
     {
@@ -384,7 +405,7 @@ final class Text implements JsonSerializable
      * @param  string $textToReplace
      * @param  string $replacement
      * @return Text
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function replaceOne(string $textToReplace, string $replacement): Text
     {
@@ -438,16 +459,24 @@ final class Text implements JsonSerializable
      * @param  string   $leftDelimiter
      * @param  string   $rightDelimiter
      * @return TextCollection
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
-    public function mailMerge(array $tokens, array $replaceData, string $leftDelimiter, string $rightDelimiter): TextCollection
-    {
+    public function mailMerge(
+        array $tokens,
+        array $replaceData,
+        string $leftDelimiter,
+        string $rightDelimiter
+    ): TextCollection {
         $collection = TextCollection::empty();
-        foreach ($replaceData as $replacementRow){
-            Assertion::eq(count($tokens), count($replacementRow), 'Replacement arrays must be same length as token array');
+        foreach ($replaceData as $replacementRow) {
+            Assertion::eq(
+                count($tokens),
+                count($replacementRow),
+                'Replacement arrays must be same length as token array'
+            );
             $count = count($tokens);
             $text = $this->clone();
-            for($i = 0; $i < $count; $i ++){
+            for ($i = 0; $i < $count; $i ++) {
                 $textToReplace = $leftDelimiter . $tokens[$i] . $rightDelimiter;
                 $text = $text->replaceAll($textToReplace, $replacementRow[$i]);
             }
@@ -456,6 +485,12 @@ final class Text implements JsonSerializable
         return $collection;
     }
 
+    /**
+     * @param string $toBeSwapped
+     * @param string $swapWith
+     * @return Text
+     * @throws AssertionFailedException
+     */
     public function swap(string $toBeSwapped, string $swapWith): Text
     {
         Assertion::contains($this->value, $toBeSwapped, '"to be swapped" value not found in string');
@@ -464,7 +499,7 @@ final class Text implements JsonSerializable
         $toBeSwappedPos = strpos($this->value, $toBeSwapped);
         $swapPos = strpos($this->value, $swapWith);
 
-        if($toBeSwappedPos < $swapPos) {
+        if ($toBeSwappedPos < $swapPos) {
             $left = $toBeSwapped;
             $right = $swapWith;
         } else {
@@ -474,6 +509,11 @@ final class Text implements JsonSerializable
         return new self(RegEx::swap($left, $right, $this->value));
     }
 
+    /**
+     * @param string $separator
+     * @return TextCollection
+     * @throws AssertionFailedException
+     */
     public function split(string $separator): TextCollection
     {
         $array = explode($separator, $this->value);

@@ -2,6 +2,7 @@
 
 namespace TraLaLilah\Text\tests;
 
+use Assert\AssertionFailedException;
 use TraLaLilah\Text\Text;
 use TraLaLilah\Text\TextCollection;
 use PHPUnit\Framework\TestCase;
@@ -21,12 +22,18 @@ class TextCollectionTest extends TestCase
             'BAZ'
         ];
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testCreate(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertInstanceOf(TextCollection::class, $collection);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAssociativeArraysLoseKeys(): void
     {
         $assoc = [
@@ -41,12 +48,18 @@ class TextCollectionTest extends TestCase
         self::assertEquals($result, $collection->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testToArray(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(self::BASIC_ARRAY, $collection->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAdd(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
@@ -54,12 +67,18 @@ class TextCollectionTest extends TestCase
         self::assertCount(4, $collection);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testCount(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(3, $collection->count());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testLengths(): void
     {
         $variousLengths = [
@@ -76,6 +95,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals($expected, $collection->lengths());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testMaxLength(): void
     {
         $variousLengths = [
@@ -87,6 +109,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals(8, $collection->maxLength());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAnyElementEquals(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
@@ -94,6 +119,9 @@ class TextCollectionTest extends TestCase
         self::assertFalse($collection->anyElementEquals('bash'));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAnyElementContains(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
@@ -101,6 +129,9 @@ class TextCollectionTest extends TestCase
         self::assertFalse($collection->anyElementContains('foooo'));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAllElementsContain(): void
     {
         $array = [
@@ -113,18 +144,25 @@ class TextCollectionTest extends TestCase
         self::assertFalse($collection->allElementsContain('bar'));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testMap(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(
-            self::TO_UPPERCASE, $collection->map(
+            self::TO_UPPERCASE,
+            $collection->map(
                 function ($item) {
-                    return $item->uppercase(); 
+                    return $item->uppercase();
                 }
             )->toArray()
         );
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testFilter(): void
     {
         $filtered = [
@@ -133,14 +171,18 @@ class TextCollectionTest extends TestCase
         ];
         $collection = TextCollection::wrap(self::BASIC_ARRAY);
         self::assertEquals(
-            $filtered, $collection->filter(
+            $filtered,
+            $collection->filter(
                 function ($item) {
-                    return $item->toString() !== 'baz'; 
+                    return $item->toString() !== 'baz';
                 }
             )->toArray()
         );
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAlphabetize(): void
     {
         $alpha_order = [
@@ -152,6 +194,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals($alpha_order, $collection->sort()->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testUnique(): void
     {
         $duplicatesArray = [
@@ -165,6 +210,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals(self::BASIC_ARRAY, $collection->unique()->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testJoin(): void
     {
         $joined = 'foo-bar-baz';
@@ -172,6 +220,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals($joined, $collection->join('-')->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testLeftJustify(): void
     {
         $input = [
@@ -189,6 +240,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals($expected, $collection->leftJustify()->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testRightJustify(): void
     {
         $input = [
@@ -206,6 +260,9 @@ class TextCollectionTest extends TestCase
         self::assertEquals($expected, $collection->rightJustify()->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testMagicMethods(): void
     {
         $input = [
@@ -243,6 +300,9 @@ class TextCollectionTest extends TestCase
         $collection->missingMethod();
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testJsonSerialize(): void
     {
         $collection = TextCollection::wrap(self::BASIC_ARRAY);

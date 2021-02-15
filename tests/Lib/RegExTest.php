@@ -2,6 +2,7 @@
 
 namespace TraLaLilah\Text\tests\Lib;
 
+use Assert\AssertionFailedException;
 use PHPUnit\Framework\TestCase;
 use TraLaLilah\Text\Lib\RegEx;
 
@@ -14,6 +15,9 @@ class RegExTest extends TestCase
         self::assertEquals($expected, RegEx::escape($subject));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testSwap(): void
     {
         $subject = 'left/right';
@@ -23,6 +27,9 @@ class RegExTest extends TestCase
         self::assertEquals($expected, RegEx::swap($left, $right, $subject));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetween(): void
     {
         $subject = 'Something is [between] the square braces.';

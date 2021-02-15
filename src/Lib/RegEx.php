@@ -4,6 +4,7 @@ namespace TraLaLilah\Text\Lib;
 
 use Assert\Assert;
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 
 class RegEx
 {
@@ -21,7 +22,7 @@ class RegEx
      * @param  string $right
      * @param  string $subject
      * @return string
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public static function swap(string $left, string $right, string $subject): string
     {
@@ -39,13 +40,16 @@ class RegEx
      * @param  string $right
      * @param  string $subject
      * @return string
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public static function between(string $left, string $right, string $subject): string
     {
         Assertion::contains($subject, $left, 'Text must contain left delimiter');
         Assertion::contains($subject, $right, 'Text must contain right delimiter');
-        Assert::that(strpos($subject, $left) < strpos($subject, $right), 'Left delimiter must come before right delimitere');
+        Assert::that(
+            strpos($subject, $left) < strpos($subject, $right),
+            'Left delimiter must come before right delimiter'
+        );
         $leftEscaped = self::escape($left);
         $rightEscaped = self::escape($right);
 

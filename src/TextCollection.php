@@ -3,6 +3,7 @@
 namespace TraLaLilah\Text;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Countable;
 use JsonSerializable;
 use Prophecy\Exception\Doubler\MethodNotFoundException;
@@ -19,10 +20,10 @@ use Tightenco\Collect\Support\Collection;
  * @method TextCollection camelCase() Converts all strings to camelCase
  * @method TextCollection titleCase() Converts all strings to Title Case
  * @method TextCollection slug() Converts all strings to slugs
- * @method TextCollection replaceSpecialCharacters(string $replacement) Replace special characters with provided replacement
+ * @method TextCollection replaceSpecialCharacters(string $replacement) Replace special characters
  * @method TextCollection trim() Trims all strings
  * @method TextCollection replaceAll(string $textToReplace, string $replacement) Replaces all instances in each string
- * @method TextCollection regexReplaceAll(string $replacement, string $pattern) Replaces all pattern matches in each string
+ * @method TextCollection regexReplaceAll(string $replacement, string $pattern) Replaces all matches in each string
  * @method missingMethod() Does not exist. For testing purposes only.
  */
 class TextCollection implements Countable, JsonSerializable
@@ -50,7 +51,7 @@ class TextCollection implements Countable, JsonSerializable
      *
      * @param  mixed $array Contents can be of mixed types. Associative arrays will lose string keys.
      * @return TextCollection
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public static function wrap($array): TextCollection
     {
@@ -74,7 +75,7 @@ class TextCollection implements Countable, JsonSerializable
     private function __construct(array $inputs)
     {
         $objects = [];
-        foreach ($inputs as $input){
+        foreach ($inputs as $input) {
             $objects[] = Text::create($input);
         }
         $this->collection = Collection::wrap($objects);
@@ -143,7 +144,8 @@ class TextCollection implements Countable, JsonSerializable
                       return $item->length();
                 }
                 return $current;
-            }, 0
+            },
+            0
         ));
     }
 
@@ -158,7 +160,7 @@ class TextCollection implements Countable, JsonSerializable
         return count(
             $this->filter(
                 function ($item) use ($value) {
-                    return $item->toString() === $value; 
+                    return $item->toString() === $value;
                 }
             )->toArray()
         ) > 0;
@@ -175,7 +177,7 @@ class TextCollection implements Countable, JsonSerializable
         return count(
             $this->filter(
                 function ($item) use ($value) {
-                    return $item->contains($value); 
+                    return $item->contains($value);
                 }
             )
         ) > 0;
@@ -192,7 +194,7 @@ class TextCollection implements Countable, JsonSerializable
         return count(
             $this->filter(
                 function ($item) use ($value) {
-                    return $item->contains($value); 
+                    return $item->contains($value);
                 }
             )
         ) === count($this);
@@ -241,7 +243,7 @@ class TextCollection implements Countable, JsonSerializable
      * Removes duplicate elements of the collection
      *
      * @return TextCollection
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function unique(): TextCollection
     {
@@ -290,7 +292,7 @@ class TextCollection implements Countable, JsonSerializable
             $result = $this->collection->map(
                 function ($item) use ($method, $args) {
                     /**
-                * @var callable $callback 
+                * @var callable $callback
                 */
                     $callback = [$item, $method];
                     return call_user_func($callback, $args);

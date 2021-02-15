@@ -58,7 +58,7 @@ class TextTest extends TestCase
         $text = Text::create(new TestObjectToString(self::STRING));
         self::assertEquals(self::STRING, $text->toString());
 
-        $text = Text::create(new TestObject__ToString(self::STRING));
+        $text = Text::create(new TestObjectUnderscoreToString(self::STRING));
         self::assertEquals(self::STRING, $text->toString());
 
         $this->expectException(InvalidArgumentException::class);
@@ -100,6 +100,9 @@ class TextTest extends TestCase
         self::assertEquals(self::LENGTH, $text->length());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testPositionOf(): void
     {
         $text = Text::create(self::STRING);
@@ -109,6 +112,9 @@ class TextTest extends TestCase
         $text->positionOf(self::DOES_NOT_CONTAIN_CASE_SENSE);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testLastPositionOf(): void
     {
         $input = 'foo foo foo';
@@ -126,6 +132,9 @@ class TextTest extends TestCase
         self::assertEquals($lastPos2, $text2->lastPositionOf($search2));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testCharacterAt(): void
     {
         $string = 'ABCDE';
@@ -134,6 +143,9 @@ class TextTest extends TestCase
         self::assertEquals($charAt4, $text->characterAt(4));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testFirst(): void
     {
         $text = Text::create(self::STRING);
@@ -143,6 +155,9 @@ class TextTest extends TestCase
         $text->first(-6);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testLast(): void
     {
         $text = Text::create(self::STRING);
@@ -152,18 +167,27 @@ class TextTest extends TestCase
         $text->last(-6);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBefore(): void
     {
         $text = Text::create(self::STRING);
         self::assertEquals(self::ALL_BEFORE_THE_SUBSTRING, $text->before(self::SUBSTRING)->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAfter(): void
     {
         $text = Text::create(self::STRING);
         self::assertEquals(self::ALL_AFTER_THE_SUBSTRING, $text->after(self::SUBSTRING)->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAllButTheFirst(): void
     {
         $text = Text::create(self::STRING);
@@ -181,6 +205,9 @@ class TextTest extends TestCase
         self::assertEquals(0, $text->count($checkNone));
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetween(): void
     {
         $inputDifferent = 'Looking for text -between? two other strings';
@@ -207,6 +234,9 @@ class TextTest extends TestCase
         $text->between('%', '%');
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetweenMoreThanOneMatch(): void
     {
         $input = '[Here] is [more] than one.';
@@ -215,6 +245,9 @@ class TextTest extends TestCase
         self::assertEquals('Here', $response);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetweenNoTokensDifferent(): void
     {
         $inputNoTokens = 'missing tokens';
@@ -223,6 +256,9 @@ class TextTest extends TestCase
         $text->between('%', '?');
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetweenNoTokensSame(): void
     {
         $inputNoTokens = 'missing tokens';
@@ -232,6 +268,9 @@ class TextTest extends TestCase
         $text->between('%', '%');
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetweenMany(): void
     {
         $input = '[Here] is [more] than one.';
@@ -244,6 +283,9 @@ class TextTest extends TestCase
         self::assertEquals($expected, $response);
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testBetweenManyNestedFails(): void
     {
         $input = '[Here [is] [more] than one].';
@@ -252,6 +294,9 @@ class TextTest extends TestCase
         $text->betweenMany('[', ']')->toArray();
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testAllButTheLast(): void
     {
         $text = Text::create(self::STRING);
@@ -280,6 +325,9 @@ class TextTest extends TestCase
         self::assertEquals(self::LOWER_CASE, $text->lowercase()->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testLowercaseFirst(): void
     {
         $input = 'THIS IS A STRING';
@@ -321,6 +369,9 @@ class TextTest extends TestCase
     }
 
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testReplaceOne(): void
     {
         $startString = 'foo foo bar';
@@ -341,6 +392,9 @@ class TextTest extends TestCase
         self::assertEquals($result, $text->replaceAll($textToReplace, $replacement)->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testCamelCase(): void
     {
         $startString = 'This is a string';
@@ -375,7 +429,6 @@ class TextTest extends TestCase
         $expected = 'this-is-a-string';
         $text = Text::create($input);
         self::assertEquals($expected, $text->slug()->toString());
-
     }
 
     public function testReplaceSpecialCharacters(): void
@@ -402,6 +455,9 @@ class TextTest extends TestCase
         self::assertEquals($replaced, $text->regexReplaceAll('foo', '/were/')->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testSwapText(): void
     {
         $regular = 'This/string';
@@ -426,6 +482,9 @@ class TextTest extends TestCase
         self::assertEquals($swapped, $text->swap($right, $left)->toString());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testSplit(): void
     {
         $input = 'String A/String B/String C';
@@ -439,6 +498,9 @@ class TextTest extends TestCase
         self::assertEquals([$input], $text->split('.')->toArray());
     }
 
+    /**
+     * @throws AssertionFailedException
+     */
     public function testMailMerge(): void
     {
         $text = '[name], [address], [zip]';
@@ -460,44 +522,4 @@ class TextTest extends TestCase
         $collection = Text::create($text)->mailMerge($tokens, $data, '[', ']');
         self::assertEquals($expected, $collection->toArray());
     }
-}
-
-class TestObjectToString
-{
-    /**
-     * @var string
-     */
-    private $value;
-
-    public function __construct(string $value)
-    {
-        $this->value = $value;
-    }
-
-    public function toString(): string
-    {
-        return $this->value;
-    }
-}
-
-class TestObject__ToString
-{
-    /**
-     * @var string
-     */
-    private $value;
-
-    public function __construct(string $value)
-    {
-        $this->value = $value;
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
-    }
-}
-
-class TestObjectWithNoMethods
-{
 }
