@@ -560,5 +560,11 @@ class TextTest extends TestCase
         $text = Text::create($input);
         self::assertEquals($result, $text->split('/')->toArray());
         self::assertEquals([$input], $text->split('.')->toArray());
+
+        $input = 'HELLO WORLD';
+        $result = str_split($input);
+
+        $text = Text::create($input);
+        self::assertEquals($result, $text->split()->toArray());
     }
 }

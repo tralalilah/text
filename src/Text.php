@@ -648,12 +648,15 @@ final class Text implements JsonSerializable
      * Splits the string on the given $separator and returns the results as a
      * TextCollection object.
      *
-     * @param  string $separator
+     * @param  null|string $separator
      * @return TextCollection
      * @throws AssertionFailedException
      */
-    public function split(string $separator): TextCollection
+    public function split(string $separator = null): TextCollection
     {
+        if ($separator === null) {
+            return TextCollection::wrap(str_split($this->value));
+        }
         $array = explode($separator, $this->value);
         return TextCollection::wrap($array);
     }
