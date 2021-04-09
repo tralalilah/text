@@ -139,7 +139,7 @@ class TextCollection implements Countable, JsonSerializable
     /**
      * Outputs the content of the collection as an array of scalar strings
      *
-     * @return array[]
+     * @return string[]
      */
     public function toArray(): array
     {
