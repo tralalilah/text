@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace TraLaLilah\Text\tests;
+namespace Lilah\TextTests;
 
 use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException;
-use TraLaLilah\Text\Text;
+use Lilah\Text\Text;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
@@ -74,14 +74,21 @@ class TextTest extends TestCase
         self::assertEquals(self::UPPER_CASE, $str2->toString());
     }
 
-    public function testEquals(): void
+    public function testIs(): void
     {
         $text1 = Text::create('1');
         $text1a = Text::create('1');
         $text2 = Text::create('2');
 
-        self::assertTrue($text1->equals($text1a));
-        self::assertFalse($text1->equals($text2));
+        self::assertTrue($text1->is($text1a));
+        self::assertFalse($text1->is($text2));
+    }
+
+    public function testIsSimilarTo(): void
+    {
+        $text1 = Text::create("UPPER CASE WITH WHITE SPACE  \n");
+        $text2 = Text::create('uppercasewith white space');
+        self::assertTrue($text1->isSimilarTo($text2));
     }
 
     public function testClone(): void
@@ -89,7 +96,7 @@ class TextTest extends TestCase
         $text1 = Text::create('clone');
         $text2 = $text1->clone();
 
-        self::assertTrue($text1->equals($text2));
+        self::assertTrue($text1->is($text2));
         self::assertFalse($text1 === $text2);
     }
 

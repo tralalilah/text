@@ -1,6 +1,6 @@
 <?php
 
-namespace TraLaLilah\Text\tests;
+namespace Lilah\TextTests;
 
 class TestObjectWithNoMethods
 {

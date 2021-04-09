@@ -1,22 +1,22 @@
 <?php declare(strict_types=1);
 
-namespace TraLaLilah\Text;
+namespace Lilah\Text;
 
 use Assert\Assert;
 use Assert\Assertion;
 use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException;
 use JsonSerializable;
-use TraLaLilah\Text\Lib\RegEx;
+use Lilah\Text\Lib\RegEx;
 use Throwable;
 
 /**
- * Class TraLiLilah\Text
+ * Class Lilah\Text
  *
  * A useful class for developers, to assist with string manipulation.
  *
  * @category Strings
- * @package  TraLaLilah\Text
+ * @package  Lilah\Text
  * @author   Lilah Sturges <lilah.sturges@gmail.com>
  * @license  MIT https://opensource.org/licenses/MIT
  * @link     https://github.com/tralalilah/text
@@ -180,9 +180,27 @@ final class Text implements JsonSerializable
      * @param  Text $compare
      * @return bool
      */
-    public function equals(Text $compare): bool
+    public function is(Text $compare): bool
     {
         return $this->value === $compare->value;
+    }
+
+    /**
+     * Tests that two Text objects have similar underlying values where:
+     *   - case is irrelevant
+     *   - whitespace is irrelevant
+     *
+     * @param Text $compare
+     * @return bool
+     */
+    public function isSimilarTo(Text $compare): bool
+    {
+        return $this
+            ->lowercase()
+            ->regexReplaceAll('', '/\s/')
+            ->is($compare
+                ->lowercase()
+                ->regexReplaceAll('', '/\s/'));
     }
 
     /**

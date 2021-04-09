@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace TraLaLilah\Text\tests;
+namespace Lilah\TextTests;
 
 use Assert\AssertionFailedException;
-use TraLaLilah\Text\Text;
-use TraLaLilah\Text\TextCollection;
+use Lilah\Text\Text;
+use Lilah\Text\TextCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Exception\Doubler\MethodNotFoundException;
 

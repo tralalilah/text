@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace TraLaLilah\Text;
+namespace Lilah\Text;
 
 use Assert\Assertion;
 use Assert\AssertionFailedException;
@@ -11,12 +11,12 @@ use Prophecy\Exception\Doubler\MethodNotFoundException;
 use Tightenco\Collect\Support\Collection;
 
 /**
- * Class TraLiLilah\TextCollection
+ * Class Lilah\TextCollection
  *
  * A useful class for developers, to assist with string manipulation.
  *
  * @category Strings
- * @package  TraLaLilah\Text
+ * @package  Lilah\Text
  * @author   Lilah Sturges <lilah.sturges@gmail.com>
  * @license  MIT https://opensource.org/licenses/MIT
  * @link     https://github.com/tralalilah/text

@@ -1,10 +1,10 @@
 <?php
 
-namespace TraLaLilah\Text\tests\Lib;
+namespace Lilah\TextTests\Lib;
 
 use Assert\AssertionFailedException;
 use PHPUnit\Framework\TestCase;
-use TraLaLilah\Text\Lib\RegEx;
+use Lilah\Text\Lib\RegEx;
 
 class RegExTest extends TestCase
 {

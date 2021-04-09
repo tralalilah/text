@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace TraLaLilah\Text\Lib;
+namespace Lilah\Text\Lib;
 
 use Assert\Assert;
 use Assert\Assertion;

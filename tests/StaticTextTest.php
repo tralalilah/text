@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace TraLaLilah\Text\tests;
+namespace Lilah\TextTests;
 
 use PHPUnit\Framework\TestCase;
-use TraLaLilah\Text\StaticText;
+use Lilah\Text\StaticText;
 
 class StaticTextTest extends TestCase
 {

@@ -1,5 +1,5 @@
 {
-    "name": "tralalilah/text",
+    "name": "lilah/text",
     "description": "String manipulation package for development",
     "version": "0.1.0",
     "type": "library",
@@ -30,12 +30,12 @@
 
     "autoload": {
         "psr-4": {
-            "TraLaLilah\\Text\\": "src"
+            "Lilah\\Text\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "TraLaLilah\\Text\\tests\\": "tests"
+            "Lilah\\TextTests\\": "tests/"
         }
     },
     "require-dev": {
